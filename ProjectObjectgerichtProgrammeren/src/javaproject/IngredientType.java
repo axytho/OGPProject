@@ -22,7 +22,7 @@ public class IngredientType {
 	 */
 	
 	public static boolean isValidName(String name) {
-		return true;
+		return false;
 	}
 
 }
