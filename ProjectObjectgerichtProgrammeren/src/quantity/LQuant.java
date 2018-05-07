@@ -1,8 +1,10 @@
 package quantity;
+
+import javaproject.State;
 /**
  * List  all liquid Quantities
  */
-public enum LQuant implements Quant{
+public enum LQuant implements Quant {
 	DROP 		(1),
 	SPOON		(8),
 	VIAL 		(5),
@@ -30,5 +32,13 @@ public enum LQuant implements Quant{
 	public int getCVal() {
 		return this.cVal;
 	}
+
+	/**
+	 * Get the state of this quantity
+	 */
+	public State getType() {
+		return State.Liquid;
+	}
+
 	
 }

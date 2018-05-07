@@ -1,5 +1,7 @@
 package quantity;
 
+import javaproject.State;
+
 public enum SQuant implements Quant {
 	PINCH 		(1),
 	SPOON		(6),
@@ -27,5 +29,12 @@ public enum SQuant implements Quant {
 	 */
 	public int getCVal() {
 		return this.cVal;
+	}
+	
+	/**
+	 * Get the state of this quantity
+	 */
+	public State getType() {
+		return State.Liquid;
 	}
 }

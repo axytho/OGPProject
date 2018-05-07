@@ -29,13 +29,24 @@ public class IngredientType {
 	 */
 	
 	
-	public IngredientType(String name, State state) {
+	public IngredientType(String name, State state, long[] standardTemperature) {
 		setName(name);
 		this.state = state;
+		this.standardTemp = standardTemperature;
 	}
 	
+	/**
+	 * The standard temperature at which this type is usually usedf
+	 */
+	private long[] standardTemp = {0, 0};
 	
-	
+	/**
+	 * Return the standard temperature
+	 */
+	@Raw @Basic
+	public long[] getStandardTemperature() {
+		return this.standardTemp;
+	}
 	
 	/**
 	 * An array of words which are considered special
@@ -106,7 +117,7 @@ public class IngredientType {
 	/**
 	 * Name of the ingredient type
 	 */
-	public String simpleName = "";
+	private String simpleName = "";
 	
 	/**
 	 * Sets the simpleName of the ingredient
@@ -139,7 +150,7 @@ public class IngredientType {
 	/**
 	 * The state of this ingredient
 	 */
-	public State state = null;
+	private State state = null;
 	
 	/**
 	 * Return the state of this Ingredient Type

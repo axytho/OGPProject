@@ -2,17 +2,32 @@ package testsuite;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.junit.*;
 
 import javaproject.*;
+import quantity.*;
 
 public class TestProject {
 	
 	static IngredientType Devilsdelight;
 	
+	static IngredientContainer JonasLocker;
+	
+	static AlchemicIngredient TodaysDD;
+	
+
+	
+	
 	@Before
 	public void setUpBeforeClass() {
-		Devilsdelight = new IngredientType("Devils Delight", State.Liquid);
+		Devilsdelight = new IngredientType("Devils Delight", State.Liquid, new long[] {0 , 200});
+		JonasLocker = new IngredientContainer("Jonas' Locker", SQuant.CHEST);
+		ArrayList<Integer> DoubleDevilQuantity = new ArrayList<Integer>(Collections.nCopies(7, 12));
+		TodaysDD = new AlchemicIngredient(Devilsdelight, DoubleDevilQuantity);
+		
 	}
 	
 	@Test
@@ -82,7 +97,53 @@ public class TestProject {
 	
 	@Test
 	public void testIngredientContainer() {
-		
+		assertEquals(JonasLocker.getCapacity(), SQuant.CHEST);
 	}
+	
+	@Test
+	public void testQuantity() {
+		assertTrue(TodaysDD.isCarriedOver());
+		assertEquals(TodaysDD.getNumberOf(LQuant.STOREROOM), 14);
+		assertEquals(TodaysDD.giveInLowestUnit(), new Integer(737868));
+	}
+	
+	@Test
+	public void testTemperature() {
+		TodaysDD.heat(50);
+		assertEquals(TodaysDD.getHotness(), 50);
+		TodaysDD.cool(60);
+		assertEquals(TodaysDD.getHotness(), 0);
+		assertEquals(TodaysDD.getColdness(), 10);
+		TodaysDD.heat(200000);
+		assertEquals(TodaysDD.getColdness(), 0);
+		assertEquals(TodaysDD.getHotness(), 10000);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
