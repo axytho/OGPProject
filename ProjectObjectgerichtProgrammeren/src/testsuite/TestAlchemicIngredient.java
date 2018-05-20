@@ -10,7 +10,7 @@ import org.junit.*;
 import javaproject.*;
 import quantity.*;
 
-public class TestProject {
+public class TestAlchemicIngredient {
 	
 	static IngredientType Devilsdelight;
 	
@@ -23,7 +23,7 @@ public class TestProject {
 	
 	@Before
 	public void setUpBeforeClass() {
-		Devilsdelight = new IngredientType("Devils Delight", State.Liquid, new long[] {0 , 200});
+		Devilsdelight = new IngredientType("Devils Delight", State.Liquid, new long[] {0 , 66}, 0.99);
 		JonasLocker = new IngredientContainer("Jonas' Locker", SQuant.CHEST);
 		ArrayList<Integer> DoubleDevilQuantity = new ArrayList<Integer>(Collections.nCopies(7, 12));
 		TodaysDD = new AlchemicIngredient(Devilsdelight, DoubleDevilQuantity);
@@ -57,12 +57,12 @@ public class TestProject {
 		
 		assertFalse(IngredientType.isValidSimpleName("%Hot"));
 		
-		assertFalse(IngredientType.isValidSimpleName("Coke mixed with Beer"));
-		assertFalse(IngredientType.isValidSimpleName("Coke mixed Beer"));
+		assertTrue(IngredientType.isValidSimpleName("Coke mixed with Beer"));
+		assertTrue(IngredientType.isValidSimpleName("Coke mixed Beer"));
 		assertTrue(IngredientType.isValidSimpleName("Cokemixed"));
 	}
 	
-	@Test
+
 	public void testIsValidMixedName()	{
 		assertTrue(AlchemicIngredient.isValidMixedName("Heated Coke mixed with Beer, Cooled Water , Vodka, Martini, Cider and Tomato Juice"));
 		assertFalse(AlchemicIngredient.isValidMixedName("Heated Coke mixed with Beer, Cooled Water mixed with Vodka, Martini, Cider and Tomato Juice"));
@@ -75,7 +75,7 @@ public class TestProject {
 		
 	}
 	
-	@Test
+
 	public void testIsValidCombinedName() {
 		assertTrue(AlchemicIngredient.isValidCombinedName("Heated Red Eye Special"));
 		assertTrue(AlchemicIngredient.isValidCombinedName("Red Eye Special"));
@@ -84,7 +84,7 @@ public class TestProject {
 		assertFalse(AlchemicIngredient.isValidCombinedName("CoKe"));
 	}
 	
-	@Test
+
 	public void testIsValidTotalName() {
 		assertTrue(AlchemicIngredient.isValidTotalName("Heated Red Eye Special (Heated Coke mixed with Beer,"
 				+ " Cooled Water , Vodka, Martini, Cider and Tomato Juice)"));
@@ -108,18 +108,67 @@ public class TestProject {
 	}
 	
 	@Test
-	public void testTemperature() {
+	public void testTemperature1() {
 		TodaysDD.heat(50);
-		assertEquals(TodaysDD.getHotness(), 50);
+		assertEquals( TodaysDD.getHotness(), 116);
+		TodaysDD.cool(66);
 		TodaysDD.cool(60);
 		assertEquals(TodaysDD.getHotness(), 0);
 		assertEquals(TodaysDD.getColdness(), 10);
 		TodaysDD.heat(200000);
-		assertEquals(TodaysDD.getColdness(), 0);
-		assertEquals(TodaysDD.getHotness(), 10000);
+		assertEquals(  TodaysDD.getColdness(), 0);
+		assertEquals(  TodaysDD.getHotness(), 10000);
+		TodaysDD.cool(1000);
+		TodaysDD.heat(Long.MAX_VALUE);
+		assertTrue(Long.MAX_VALUE>=0);
+		assertEquals(  TodaysDD.getHotness(), 10000);
+		TodaysDD.heat((long) Math.pow(2, 65));
+		assertEquals(  TodaysDD.getHotness(), 10000);
+		TodaysDD.heat(Long.MAX_VALUE);
+		assertEquals(  TodaysDD.getHotness(), 10000);
+		assertEquals(  TodaysDD.getHotness(), 10000);
+		AlchemicIngredient.setMaxTemperature(Long.MAX_VALUE);
+		TodaysDD.cool(0);
+		assertEquals(  TodaysDD.getHotness(), 10000);
+		TodaysDD.cool(-200);
+		assertEquals(  TodaysDD.getHotness(), 10000);
+		TodaysDD.cool(Long.MIN_VALUE);
+		assertEquals(  TodaysDD.getHotness(), 10000);
+		TodaysDD.cool(Long.MAX_VALUE);
+		assertEquals(  TodaysDD.getHotness(), 0);
+		assertEquals(  TodaysDD.getColdness(), Long.MAX_VALUE-10000);
+		TodaysDD.cool(Long.MAX_VALUE);
+		assertEquals(  TodaysDD.getColdness(), Long.MAX_VALUE);
+		TodaysDD.heat(0);
+		assertEquals(  TodaysDD.getColdness(), Long.MAX_VALUE);
+		TodaysDD.heat(-200);
+		assertEquals(  TodaysDD.getColdness(), Long.MAX_VALUE);
+		TodaysDD.cool(Long.MIN_VALUE);
+		assertEquals(  TodaysDD.getColdness(), Long.MAX_VALUE);
 	}
 	
+	@Test
+	public void testTemperatureName() {
+		assertEquals(TodaysDD.getTemperatureName(), "");
+		TodaysDD.heat(50);
+		assertEquals(TodaysDD.getTemperatureName(), "Heated");
+		TodaysDD.cool(60);
+		assertEquals(TodaysDD.getTemperatureName(), "Cooled");
+	}
 	
+	@Test
+	public void testVolatility() {
+		assertTrue(TodaysDD.getCharVolatility() > 0.89);
+	}
+	
+	@Test
+	public void numberTests() {
+		int three = 3;
+		int two = 2;
+		double threetwo = three / two;
+		assertEquals(threetwo, 3/2, 0.0001);
+	}
+
 	
 	
 	

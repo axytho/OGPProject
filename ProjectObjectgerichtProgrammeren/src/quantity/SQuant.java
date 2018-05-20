@@ -22,7 +22,7 @@ public enum SQuant implements Quant {
 	/**
 	 * The value of the previous quantity
 	 */
-	public int cVal = 0;
+	private int cVal = 0;
 	
 	/**
 	 * Return the value of the previous quantity
@@ -35,6 +35,6 @@ public enum SQuant implements Quant {
 	 * Get the state of this quantity
 	 */
 	public State getType() {
-		return State.Liquid;
+		return State.Solid;
 	}
 }

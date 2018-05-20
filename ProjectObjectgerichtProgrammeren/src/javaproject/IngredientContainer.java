@@ -22,6 +22,8 @@ public class IngredientContainer {
 	 * 			The capacity of this ingredient container
 	 * @pre		The capacity must be a valid capacity
 	 * 			| isValidCapacity(capacity)
+	 * @pre		The contents must be valid
+	 * 			| isValidContents(contents)
 	 * @effect	The capacity is set to the given capacity
 	 * 			| setCapacity(capacity)
 	 * @post	The new name is the given nam
@@ -44,6 +46,8 @@ public class IngredientContainer {
 	 * 			The content of this Ingredient Container
 	 * @pre		The capacity must be a valid capacity
 	 * 			| isValidCapacity(capacity)
+	 * @pre		The contents must be valid
+	 * 			| isValidContents(contents)
 	 * @effect	The capacity is set to the given capacity
 	 * 			| setCapacity(capacity)
 	 * @post	The new name is the given nam
@@ -73,6 +77,16 @@ public class IngredientContainer {
 		return this.name;
 	}
 	
+	/**
+	 * Empty the storage
+	 * 
+	 * @post	The storage is empty
+	 * 			| new.getContents() == null
+	 */
+	public void empty() {
+		setContents(null);
+	}
+	
 	
 	/**
 	 * The contents of the storage
@@ -82,7 +96,8 @@ public class IngredientContainer {
 	 * @pre		The contents must be valid
 	 * 			| isValidContents(contents)
 	 */
-	public void setContents(AlchemicIngredient content) {
+	@Raw
+	private void setContents(AlchemicIngredient content) {
 		this.content = content;
 	}
 	
@@ -97,7 +112,7 @@ public class IngredientContainer {
 	 * 			|		content.getItemAt() 
 	 */
 	
-	public boolean isValidContents(AlchemicIngredient content) {
+	public boolean canHaveAsContents(AlchemicIngredient content) {
 		return content.fits(capacity) || content == null;
 	}
 	
@@ -151,7 +166,7 @@ public class IngredientContainer {
 	 * 			| result == (capacity != null && capacity != LQuant.STOREROOM && capacity != SQuant.STOREROOM && capacity != LQuant.DROP 
 				&& capacity != SQuant.PINCH)
 	 */
-	public boolean isValidCapacity(Quant capacity) {
+	public static boolean isValidCapacity(Quant capacity) {
 		return capacity != null && capacity != LQuant.STOREROOM && capacity != SQuant.STOREROOM && capacity != LQuant.DROP 
 				&& capacity != SQuant.PINCH;
 	}

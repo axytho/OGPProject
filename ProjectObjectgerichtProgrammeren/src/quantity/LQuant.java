@@ -24,7 +24,7 @@ public enum LQuant implements Quant {
 	/**
 	 * The value of the previous quantity
 	 */
-	public int cVal = 0;
+	private int cVal = 0;
 	
 	/**
 	 * Return the value of the previous quantity
