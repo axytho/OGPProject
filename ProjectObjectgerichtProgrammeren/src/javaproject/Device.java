@@ -38,19 +38,26 @@ public abstract class Device {
 	 * 			The container which we're adding
 	 * @post	The content of the container is now stored in the device
 	 * 			| new.getIngredients().contains(container) == true
-	 * @post	If the device can only hold the current number of ingredients, the last ingredient in the device is replaced by the ingredient in the container
+	 * @post	If the device can only hold the current number of ingredients, the last ingredient in the device is replaced 
+	 * 			by the ingredient in the container and the last ingredient is terminated.
 	 * 			| new.getIngredients().contains(old.getIngredients().get(getIngredients().size() - 1) == false
+	 * 			| && old.getIngredients().get(getIngredients().size() - 1).isTerminated() == true
 	 * @throws	emptyContainerException
 	 * 			The container you're adding is empty
 	 * 			| container.getContents() == null
+	 * @throws	IllegalArgumentException
+	 * 			The alchemic ingredient you're trying to add has already been terminated
 	 */
 	
-	public void add(IngredientContainer container) throws EmptyContainerException {
+	public void add(IngredientContainer container) throws EmptyContainerException, IllegalArgumentException {
 		if (container.getContents() == null) {
 			throw new EmptyContainerException();
 		}
+		if (container.getContents().isTerminated()) {
+			throw new IllegalArgumentException("Container is terminated!");
+		}
 		if (!isValidNumberOfItems(getIngredients().size() +1)) {
-			pop();
+			pop().terminate();
 		} 
 		deviceStorage.push(container.getContents());	
 		container.empty();

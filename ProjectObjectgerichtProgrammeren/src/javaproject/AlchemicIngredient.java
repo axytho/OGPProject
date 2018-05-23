@@ -23,6 +23,8 @@ import quantity.*;
  * 			| isValidQuantity()
  * @invar	Quantity is carried over from smaller quantities to larger quantities
  * 			| isCarriedOver()
+ * @invar	Is not terminated
+ * 			| !isTerminated()
  * 
  * @author Jonas
  *
@@ -100,7 +102,6 @@ public class AlchemicIngredient {
 		}
 		setState(getType().getState());
 		setQuantity(quantity);
-		setMaxTemperature(10000);
 		setHotness(getType().getStandardTemperature()[1]);
 		setColdness(getType().getStandardTemperature()[0]);
 		createVolatility();
@@ -130,6 +131,42 @@ public class AlchemicIngredient {
 //		
 //		this(type, giveInLowestUnit(unit));
 //	}
+	
+	
+	/***************************************************************
+	 * CLONE
+	 ***************************************************************/
+	
+	/**
+	 * Copy this Alchemic Ingredient
+	 * 
+	 * @param	ingredient
+	 * 			The alchemic ingredient we want to copy
+	 * @post	A new alchemic Ingredient with the same properties as the given ingredient is created
+	 * 			| new.getIngredientMixList() == ingredient.getIngredientMixList()
+	 * @effect	The properties of the new alchemic ingredient are set to the properties of ingredient
+	 * 			| this.setSpecialName(ingredient.getSpecialName())
+	 *			| this.setQuantity(ingredient.getQuantity())
+	 * 			| this.setState(ingredient.getState())
+	 * 			| this.setColdness(ingredient.getColdness())
+	 * 			| this.setHotness(ingredient.getHotness())
+	 * 			| this.setCharacteristicVolatility(ingredient.getCharVolatility())
+	 * 
+	 * @note	We are deliberately not implementing java's clone method, see:
+	 * 			https://dzone.com/articles/java-cloning-copy-constructor-vs-cloning
+	 * 			https://www.artima.com/intv/bloch13.html
+	 */
+	
+	public AlchemicIngredient(AlchemicIngredient ingredient) {
+		this.mixList = ingredient.getIngredientMixList();
+		this.setSpecialName(ingredient.getSpecialName());
+		this.setQuantity(ingredient.getQuantity());
+		this.type = ingredient.getType();
+		this.setState(ingredient.getState());
+		this.setColdness(ingredient.getColdness());
+		this.setHotness(ingredient.getHotness());
+		this.setCharacteristicVolatility(ingredient.getCharVolatility());
+	}
 	
 	/***************************************************************
 	 * NAME CHECKS
@@ -212,8 +249,14 @@ public class AlchemicIngredient {
 	 * 			the special name of this ingredient
 	 * @post	The new special name is equal to the given name
 	 * 			| new.getSpecialName() == name
+	 * @throws	IllegalArgumentException
+	 * 			The given name is not valid
+	 * 			| !IngredientType.isValidSimpleName(name)
 	 */		
-	protected void setSpecialName(String name) {
+	protected void setSpecialName(String name) throws IllegalArgumentException {
+		if (!IngredientType.isValidSimpleName(name)) {
+			throw new IllegalArgumentException("Invalid Name!");
+		}
 		this.specialName = name;
 	}
 	
@@ -424,7 +467,7 @@ public class AlchemicIngredient {
 	 */
 	
 	public int getNumberOf(Quant unit) {
-		return getItemAt(getConversionList().indexOf(unit));
+		return getQuantityAt(getConversionList().indexOf(unit));
 	}
 	/**
 	 * Return the item registered at the given position in this directory.
@@ -435,7 +478,7 @@ public class AlchemicIngredient {
 	 *         	of quanties registered 
 	 *			| (index < 1) || (index > getNbItems())
 	 */
-	protected int getItemAt(int index) {
+	protected int getQuantityAt(int index) {
 		return quant.get(index);
 	}
 	
@@ -451,7 +494,8 @@ public class AlchemicIngredient {
 	 * @post	The value at that index is now equal to the given value
 	 * 			| new.getItemAt(index) == value
 	 */
-	private void setItemAt(int index, int value) {
+	@Model @Raw
+	protected void setItemAt(int index, int value) {
 		this.quant.set(index, value);
 	}
 	
@@ -471,11 +515,11 @@ public class AlchemicIngredient {
 	 * @return	True if and only if there are no amounts above the quantities given by getConversionList()
 	 * 			| True if and only if
 	 * 			| for (each index in 1..getSize()-1)
-	 * 			|	getConversionList().get(index + 1).getCVal() >= getItemAt(index)
+	 * 			|	getConversionList().get(index + 1).getCVal() > getItemAt(index)
 	 */
 	public boolean isCarriedOver() {
 		for (int index = 0; index < getSize()-1; index++) {
-			if (getConversionList().get(index + 1).getCVal() < getItemAt(index)) {
+			if (getConversionList().get(index + 1).getCVal() <= getQuantityAt(index)) {
 				return false;
 			}
 		}
@@ -485,8 +529,18 @@ public class AlchemicIngredient {
 	
 	/**
 	 * A list representing the quantities of this Ingredient Type
+	 * 
+	 * @invar	The Alchemic Ingredient must be able to have this quant as its quantity
+	 * 			| canHaveAsQuantity(quant) == true
 	 */
 	private ArrayList<Integer> quant = null;
+	
+	/**
+	 * Return a copy of the  list representing the quantities of this ingredient type
+	 */
+	private ArrayList<Integer> getQuantity() {
+		return new ArrayList<Integer>(quant);
+	}
 	
 	/**
 	 * Carry over the quantities of this Ingredient
@@ -499,11 +553,11 @@ public class AlchemicIngredient {
 	@Raw
 	public void carryOver() {
 		for (int index = 0; index < getSize()-1; index++) {
-			int quantity = getItemAt(index);
+			int quantity = getQuantityAt(index);
 			int max = getConversionList().get(index + 1).getCVal();
 			setItemAt(index, quantity % max);
 			int carryOver = quantity / max;
-			setItemAt(index+1, getItemAt(index+1) + carryOver);
+			setItemAt(index+1, getQuantityAt(index+1) + carryOver);
 		}
 	}
 	
@@ -521,7 +575,7 @@ public class AlchemicIngredient {
 	 * 
 	 */
 	@Model
-	protected void setQuantity(ArrayList<Integer> quantity) {
+	private void setQuantity(ArrayList<Integer> quantity) {
 		this.quant = new ArrayList<Integer>(quantity);
 		carryOver();
 	}
@@ -562,7 +616,7 @@ public class AlchemicIngredient {
 	 * @return	True if the quantity has the correct size and is valid
 	 * 			| result == isValidQuantity(quant) && getSize() == getConversionList().size()
 	 */
-
+	@Raw
 	public boolean canHaveAsQuantity(ArrayList<Integer> quant) {
 		return isValidQuantity(quant) && getSize() == getConversionList().size();
 	}
@@ -584,6 +638,7 @@ public class AlchemicIngredient {
 		}
 		return factorialList;
 	}
+	
 	/**
 	 * Give unit in lowest unit
 	 * 
@@ -625,6 +680,8 @@ public class AlchemicIngredient {
 	 * 
 	 * @post	This alchemic ingredient is now equal to the unit
 	 * 			| convertToLowestUnit(unit) == giveInLowestUnit()
+	 * 
+	 * @note	Can also be implemented using setQuantityTo() and convertToLowestUnit(Quant unit)
 	 */
 	public void can(Quant unit) {
 		if (!fits(unit)) {
@@ -634,6 +691,22 @@ public class AlchemicIngredient {
 					setItemAt(index, 1);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Set the quantity of this alchemic ingredient in the smallest unit available
+	 * 
+	 * @param	quantity
+	 * 			The quantity in the lowest unit
+	 * @post	This alchemic ingredient's quantity is now equal to the given quantity
+	 * 			| quantity = new.giveInLowestUnit()
+	 */
+	@Model
+	protected void	setQuantityTo(int quantity)	{
+		setItemAt(0, quantity);
+		for (int index = 1; index < getSize(); index++) {
+			setItemAt(index, 0);
 		}
 	}
 	
@@ -651,7 +724,7 @@ public class AlchemicIngredient {
 		int sum = 0;
 		ArrayList<Integer> factorialList = factorialList();
 		for (int index = 0; index < getSize(); index++) {
-			sum += this.getItemAt(index) * factorialList.get(index);
+			sum += this.getQuantityAt(index) * factorialList.get(index);
 		}
 		return sum;
 	}
@@ -667,6 +740,16 @@ public class AlchemicIngredient {
 	}
 	
 	/**
+	 * Convert to storerooms
+	 * 
+	 * @return	the quantity in spoons
+	 * 			| giveInLowestUnit() / factorialList().get(factorialList().size() - 1)
+ 	 */
+	public double giveInStoreRooms() {
+		return giveInLowestUnit() / factorialList().get(factorialList().size() - 1);
+	}	
+	
+	/**
 	 * Find the transmogrified quantity of the given ingredient
 	 * 
 	 * @result	An arrayList which contains in the first element the amount of ingredient in spoons multiplied with the amount
@@ -676,10 +759,8 @@ public class AlchemicIngredient {
 	 * 			| else
 	 * 			|	result.get(i) == 0
 	 */
-	public ArrayList<Integer> getTransmogrifiedQuant(State state) {
-		ArrayList<Integer> resultList = getZeroQuantityList(state.getQuantities().size());
-		resultList.set(0, (int) (this.giveInSpoons() * state.getQuantities().get(1).getCVal()));
-		return resultList;
+	public Integer getTransmogrifiedQuant(State state) {
+		return (int) (this.giveInSpoons() * state.getQuantities().get(1).getCVal());
 	}
 	
 
@@ -737,7 +818,7 @@ public class AlchemicIngredient {
 	 * 			| new.getState() == state
 	 */
 	@Raw @Model
-	private void setState(State state) {
+	protected void setState(State state) {
 		this.state = state;
 	}
 	
@@ -778,7 +859,7 @@ public class AlchemicIngredient {
 	 * The max value of coldness and hotness
 	 */
 	
-	private static long maxvalue = 0;
+	private static long maxvalue = 10000;
 	
 	/**
 	 * Return the max temperature
@@ -1182,6 +1263,32 @@ public class AlchemicIngredient {
 	
 	
 	
+	/***************************************************************
+	 * Termination
+	 ***************************************************************/
+	
+	
+	/**
+	 * Whether the ingredient is terminated
+	 */
+	private boolean terminated = false;
+	
+	/**
+	 * Check whether the ingredient is terminated
+	 */
+	public boolean isTerminated() {
+		return terminated;
+	}
+	
+	/**
+	 * Terminate this ingredient
+	 * 
+	 * @post	The ingredient is terminated
+	 * 			| this.isTerminated() == true
+	 */
+	public void terminate() {
+		this.terminated = false;
+	}
 	
 	
 	

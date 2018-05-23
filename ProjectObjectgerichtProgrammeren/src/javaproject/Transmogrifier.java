@@ -1,6 +1,7 @@
 package javaproject;
 
 
+
 public class Transmogrifier extends Device {
 
 	
@@ -13,18 +14,26 @@ public class Transmogrifier extends Device {
 	 * 			| getIngredients().isEmpty() == true
 	 * @effect	Depending on the state, the quantity of the result is set to the proper transmogrified quantity
 	 * 			| 	if (getResult().getState() == State.Liquid)
-	 *			|		getResult().setQuantity(getResult().getTransmogrifiedQuant(State.Solid));
+	 *			|		Integer nextQuantity = getResult().getTransmogrifiedQuant(State.Solid);
+	 *			|		getResult().setState(State.Solid);
+	 *			|		getResult().setQuantityTo(nextQuantity);
 	 *			|	else 
-	 *			|		getResult().setQuantity(getResult().getTransmogrifiedQuant(State.Liquid));
+	 *			|		Integer nextQuantity = getResult().getTransmogrifiedQuant(State.Liquid);
+	 *			|		getResult().setState(State.Liquid);
+	 *			|		getResult().setQuantityTo(nextQuantity);
 	 */
 	@Override
 	public void execute() {
 		super.execute();
 		setResult(pop());
 		if (getResult().getState() == State.Liquid) {
-			getResult().setQuantity(getResult().getTransmogrifiedQuant(State.Solid));
+			Integer nextQuantity = getResult().getTransmogrifiedQuant(State.Solid);
+			getResult().setState(State.Solid);
+			getResult().setQuantityTo(nextQuantity);
 		} else {
-			getResult().setQuantity(getResult().getTransmogrifiedQuant(State.Liquid));
+			Integer nextQuantity = getResult().getTransmogrifiedQuant(State.Liquid);
+			getResult().setState(State.Liquid);
+			getResult().setQuantityTo(nextQuantity);
 		}
 	}
 
