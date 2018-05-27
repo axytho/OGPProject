@@ -1,4 +1,4 @@
-package javaproject;
+package javaproject.exception;
 
 
 /**

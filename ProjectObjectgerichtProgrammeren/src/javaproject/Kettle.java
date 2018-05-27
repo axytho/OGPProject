@@ -52,7 +52,7 @@ public class Kettle extends Device {
 	 * 			| super.move(lab)
 	 */
 	@Override
-	public void move(Laboratory lab) {
+	protected void move(Laboratory lab) {
 		getLab().setKettle(null);
 		super.move(lab);
 		lab.setKettle(this);
@@ -190,7 +190,7 @@ public class Kettle extends Device {
 	 *  		| 			if ( Math.abs(AlchemicIngredient.differenceTemperature(ingredient.getType().getStandardTemperature(), new double[] {0,20}))
 	 *  		|			<= for each otherIngredient in getIngredients()
 	 *  		|					Math.abs(AlchemicIngredient.differenceTemperature(otherIngredient.getType().getStandardTemperature(), new double[] {0,20})) )
-	 *  		|			then ingredient.getState() = State.Solid
+	 *  		|			then ingredient.getState() == State.Solid
 	 *  		|	) then result ==  State.Solid
 	 *  		|	 else result == State.Liquid
 	 * 
@@ -302,9 +302,9 @@ public class Kettle extends Device {
 	 * @return	True if all elements are in a liquid state
 	 * 			| if (
 	 * 			| for each element in list:
-	 * 			|		element.getState() = State.Liquid
+	 * 			|		element.getState() == State.Liquid
 	 * 			|	) 
-	 * 			| result = true
+	 * 			| result == true
 	 */
 	public boolean allLiquid() {
 		for (AlchemicIngredient ingredient: getIngredients()) {
@@ -321,9 +321,9 @@ public class Kettle extends Device {
 	 * @return	True if all elements are in a solid state
 	 * 			| if (
 	 * 			| for each element in list:
-	 * 			|		element.getState() = State.Solid
+	 * 			|		element.getState() == State.Solid
 	 * 			|	) 
-	 * 			| result = true
+	 * 			| result == true
 	 */
 	public boolean allSolid() {
 		for (AlchemicIngredient ingredient: getIngredients()) {
@@ -344,11 +344,11 @@ public class Kettle extends Device {
 	 * @return	if everything is liquid, result equals a list containing the uncarried amount of pinches of all the ingredients
 	 * 			| if (for each ingredient in getIngredients()
 	 * 			|			ingredient.getState() == State.Liquid)
-	 * 			|   then result.get(0) = sum(for each ingredient in getIngredients(): ingredient.giveInLowestUnit())
+	 * 			|   then result.get(0) == sum(for each ingredient in getIngredients(): ingredient.giveInLowestUnit())
 	 * 			|			&& for index in 1..10: result.get(index) == 0
 	 * 			| if (for each ingredient in getIngredients()
 	 * 			|			ingredient.getState() == State.Solid)
-	 * 			|   then result.get(0) = sum(for each ingredient in getIngredients(): ingredient.giveInLowestUnit())
+	 * 			|   then result.get(0) == sum(for each ingredient in getIngredients(): ingredient.giveInLowestUnit())
 	 * 			|			&& for index in 1..10: result.get(index) == 0   
 	 * 			| else
 	 * 			|		result.get(0) == 0 && for index in 2..10: result.get(index) == 0

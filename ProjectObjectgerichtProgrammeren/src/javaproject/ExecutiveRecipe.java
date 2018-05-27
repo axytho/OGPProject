@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
-import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.*;
 import be.kuleuven.cs.som.annotate.Model;
+import be.kuleuven.cs.som.annotate.Raw;
 import javaproject.Recipe.Amount;
+import javaproject.exception.ExceedsContainerCapacityException;
 import javaproject.exception.ExceedsStorageException;
 import javaproject.exception.NameNotFoundException;
 
@@ -17,7 +19,7 @@ import javaproject.exception.NameNotFoundException;
  */
 
 public class ExecutiveRecipe {
-	//TODO: " == " check on all
+
 	
 	/**
 	 * Construct a new Executive recipe refering to a given recipe
@@ -39,6 +41,7 @@ public class ExecutiveRecipe {
 	/**
 	 * Return the recipe which this Executive recipe is meant to help execute
 	 */
+	@Raw @Basic
 	public Recipe getRecipe() {
 		return this.recipe;
 	}
@@ -97,6 +100,7 @@ public class ExecutiveRecipe {
 	/**
 	 * Return the factor with which we multiply our ingredients
 	 */
+	@Raw @Basic
 	public int getFactor() {
 		return this.factor;
 	}
@@ -170,6 +174,7 @@ public class ExecutiveRecipe {
 	/**
 	 * Return the index of the current amount
 	 */
+	@Raw @Basic
 	public int getIndexAmount() {
 		return indexAmount;
 	}
@@ -177,6 +182,7 @@ public class ExecutiveRecipe {
 	/**
 	 * Go to the next amount
 	 */
+	@Basic
 	public void nextAmount() {
 		indexAmount++;
 	}
@@ -195,7 +201,7 @@ public class ExecutiveRecipe {
 		return getRecipe().getAmounts().get(getIndexAmount());
 	}
 	
-	//TODO: check private/protected/public for all functions
+
 	
 	
 	/**

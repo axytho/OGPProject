@@ -2,7 +2,6 @@ package javaproject;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,10 +9,8 @@ import java.util.List;
 import be.kuleuven.cs.som.annotate.*;
 import quantity.*;
 
-// TODO: CHECK ALL VARIABLES ON BEING PRIVATE
-// TODO: CHECK ALL INVARS!
 // TODO: CHECK 7 ITEM LIST FEEDBACK PRACTICUM 2
-// TODO: Heated/Danger total name
+//TODO: check private/protected/public for all functions
 /**
  * 
  * 
@@ -30,7 +27,7 @@ import quantity.*;
  * @invar	Is not terminated
  * 			| !isTerminated()
  * 
- * @author Jonas
+ * @author Jonas && Frederik
  *
  */
 
@@ -61,11 +58,11 @@ public class AlchemicIngredient {
 	 * @post	The type of this ingredient is set to the given type
 	 * 			If the type is not a valid type, the type is set to Water, a default type signifying "nothing".
 	 * 			| if (isValidType(type))
-	 * 			|	new.getType() = type
+	 * 			|	new.getType() == type
 	 * 			| else
-	 * 			| 		this.type = new IngredientType("Water", State.Liquid, new long[] {0, 20}, 0)
+	 * 			| 		this.type == new IngredientType("Water", State.Liquid, new long[] {0, 20}, 0)
 	 * @post	The quantity of this Alchemic ingredient is to quantity
-	 * 			| new.getQuantity() = quantity;
+	 * 			| new.getQuantity() == quantity;
 	 * @post	The maximum temperature is set to 10000
 	 * 			| getMaxTemperature() == 10000
 	 * @effect	The volatility is created
@@ -205,9 +202,10 @@ public class AlchemicIngredient {
 	 * @param	type
 	 * 			The ingredient type which is added
 	 * @post	An ingredient type is added to the mix list
-	 * 			| new.get(old.size()) = type
+	 * 			| new.get(old.size()) == type
 	 */
-	public void addToMixList(IngredientType type) {
+	@Model
+	protected void addToMixList(IngredientType type) {
 		mixList.add(type);
 	}
 	
@@ -223,7 +221,7 @@ public class AlchemicIngredient {
 	 * Get a list of the alphabetically sorted names of all the types mixed in this alchemic ingredient
 	 * 
 	 * @return	A list of the alphabetically sorted names of all the types mixed in this alchemic ingredient
-	 * 			| for each type, type2 in getMixList()
+	 * 			| for each type in getMixList()
 	 * 			|		result.contains(type.getName())
 	 * 
 	 */
@@ -245,6 +243,7 @@ public class AlchemicIngredient {
 	/**
 	 * Get the special name of this ingredient
 	 */
+	@Raw @Basic
 	public String getSpecialName() {
 		return this.specialName;
 	}
@@ -260,6 +259,7 @@ public class AlchemicIngredient {
 	 * 			The given name is not valid
 	 * 			| !IngredientType.isValidSimpleName(name)
 	 */		
+	@Model
 	protected void setSpecialName(String name) throws IllegalArgumentException {
 		if (!IngredientType.isValidSimpleName(name)) {
 			throw new IllegalArgumentException("Invalid Name!");
@@ -332,9 +332,9 @@ public class AlchemicIngredient {
 	 * Set the quantity of this Ingredient to 0 for all units
 	 * 
 	 * @post	The quantity of this Alchemic ingredient is 0
-	 * 			| new.getQuantity() = Collections.nCopies(7, 0);
+	 * 			| new.getQuantity() == Collections.nCopies(7, 0);
 	 */
-	public void setQuantityToZero() {
+	protected void setQuantityToZero() {
 		quant = getZeroQuantityList(getSize());
 	}
 	
@@ -346,6 +346,7 @@ public class AlchemicIngredient {
 	 * 
 	 * @note	Not a static function, because if the size of conversion list changed, it should still work
 	 */
+	@Raw
 	public static ArrayList<Integer> getZeroQuantityList(int size) {
 		return new ArrayList<Integer>(Collections.nCopies(size, 0));
 	}
@@ -355,7 +356,7 @@ public class AlchemicIngredient {
 	 * 
 	 * @return	result == getState().getQuantities()
 	 */
-	
+	@Basic @Raw
 	private List<Quant> getConversionList() {
 		return getState().getQuantities();
 	}
@@ -370,7 +371,6 @@ public class AlchemicIngredient {
 	 * @return	The quantity of that unit
 	 * 			| result == getItemAt(getConversionList().indexOf(unit))
 	 */
-	
 	public int getNumberOf(Quant unit) {
 		return getQuantityAt(getConversionList().indexOf(unit));
 	}
@@ -383,6 +383,7 @@ public class AlchemicIngredient {
 	 *         	of quanties registered 
 	 *			| (index < 1) || (index > getNbItems())
 	 */
+	@Model @Raw
 	protected int getQuantityAt(int index) {
 		return quant.get(index);
 	}
@@ -476,10 +477,10 @@ public class AlchemicIngredient {
 	 * @post	The quantity is validly carried over
 	 * 			| isCarriedOver() == true 
 	 * @post	The quantity of this Alchemic ingredient is equal to quantity trimmed to the correct size
-	 * 			| new.getQuantity() = quantity.subList(0, getSize());
+	 * 			| new.getQuantity() == quantity.subList(0, getSize());
 	 * 
 	 */
-	@Model
+	@Model @Raw
 	private void setQuantity(ArrayList<Integer> quantity) {
 		this.quant = new ArrayList<Integer>(new ArrayList<Integer>(quantity).subList(0, getConversionList().size()));
 		carryOver();
@@ -608,7 +609,7 @@ public class AlchemicIngredient {
 	 * @param	quantity
 	 * 			The quantity in the lowest unit
 	 * @post	This alchemic ingredient's quantity is now equal to the given quantity
-	 * 			| quantity = new.giveInLowestUnit()
+	 * 			| quantity == new.giveInLowestUnit()
 	 */
 	@Model
 	protected void	setQuantityTo(int quantity)	{
@@ -847,7 +848,7 @@ public class AlchemicIngredient {
 	 * 			out of bounds in which case we set it to the closest bound
 	 * 			| new.getColdness() == long.min(long.max(coldness, 0), getMaxTemperature());
 	 */
-	@Model
+	@Model @Raw
 	private void setColdness(long coldness) {
 		this.coldness = Long.min(Long.max(coldness, 0), getMaxTemperature());
 	}
@@ -861,7 +862,7 @@ public class AlchemicIngredient {
 	 * 			out of bounds in which case we set it to the closest bound
 	 * 			| new.getHotness() == Long.min(Long.max(hotness, 0), getMaxTemperature());
 	 */
-	@Model
+	@Model @Raw
 	private void setHotness(long hotness) {
 		this.hotness = Long.min(Long.max(hotness, 0), getMaxTemperature());
 	}

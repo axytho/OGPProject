@@ -43,7 +43,7 @@ public class Oven extends TempDevice {
 	 * 			| super.move(lab)
 	 */
 	@Override
-	public void move(Laboratory lab) {
+	protected void move(Laboratory lab) {
 		getLab().setOven(null);
 		super.move(lab);
 		lab.setOven(this);

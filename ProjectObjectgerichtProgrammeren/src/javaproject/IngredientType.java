@@ -33,7 +33,7 @@ public class IngredientType {
 	 * @effect	The simpleName of the ingredient is set to the given simpleName
 	 * 			| setName(simpleName)
 	 * @post	The state of this ingredient type is set to the given state
-	 * 			| new.getState() = state
+	 * 			| new.getState() == state
 	 * @post	The standard temperature is set to the given temperature if the given temperature is valid
 	 * 			else, the standard temperature is set to [0, 1]
 	 * @throws	IllegalArgumentException
@@ -73,8 +73,9 @@ public class IngredientType {
 	 * @param	temp
 	 * 			The temperature to which the standard temperature is set
 	 * @post	The new temperature equals the given temperature
-	 * 			| new.getStandardTemperature() = temperature
+	 * 			| new.getStandardTemperature() == temperature
 	 */
+	@Model
 	private void setStandardTemperature(long[] temperature) {
 		this.standardTemp = temperature;
 	}

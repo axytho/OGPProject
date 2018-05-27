@@ -1,12 +1,12 @@
 package testsuite;
 
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
 import org.junit.*;
 
 import javaproject.*;
+import javaproject.ExecutiveRecipe.Instruction;
 import javaproject.Recipe.Amount;
 import quantity.LQuant;
 import quantity.SQuant;
@@ -21,8 +21,16 @@ public class RecipeTest {
 	
 	static Recipe.Amount Merc, Wat, Imp, Gar, Black, Must;
 	
+	static Device MyLittleCatOven, CatKettle, CatTrans, MyLittleDogFridge;
+	
+	static ExecutiveRecipe recipe;
+	
+	static Laboratory lab;
+	
 	@Before
 	public void setUpBeforeClass() {
+		recipeForDisaster = new Recipe(new ArrayList<Amount>(), new ArrayList<Instruction>());
+		recipe = new ExecutiveRecipe(recipeForDisaster);
 		MercurialAcid = new IngredientType("Mercurial Acid", State.Liquid, new long[] {0 , 40}, 0.3);
 		Water = new IngredientType("Water", State.Liquid, new long[] {0, 20}, 0);
 		ImpGas = new IngredientType("Imp Gas", State.Liquid, new long[] {0 , 30}, 0.9);
@@ -36,9 +44,35 @@ public class RecipeTest {
 		recipeAmount.add(recipeForDisaster.new Amount(3, SQuant.SPOON, Garlic));
 		recipeAmount.add(recipeForDisaster.new Amount(4, LQuant.DROP, BlackLotus));
 		recipeAmount.add(recipeForDisaster.new Amount(1, LQuant.SPOON, Mustard));
+		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+		instructions.add(recipe.new Add());
+		instructions.add(recipe.new CoolDown());
+		instructions.add(recipe.new Add());
+		instructions.add(recipe.new HeatUp());
+		instructions.add(recipe.new Mix());
+		instructions.add(recipe.new Add());
+		instructions.add(recipe.new CoolDown());
+		instructions.add(recipe.new Mix());
+		instructions.add(recipe.new Add());
+		instructions.add(recipe.new HeatUp());
+		instructions.add(recipe.new Mix());
+		instructions.add(recipe.new HeatUp());
+		instructions.add(recipe.new Add());
+		instructions.add(recipe.new HeatUp());
+		instructions.add(recipe.new Add());
+		instructions.add(recipe.new Mix());
+		recipeForDisaster= new Recipe(recipeAmount, instructions);	
 		
-
-
-
+		lab = new Laboratory(3);
+		CatTrans = new Transmogrifier(lab);
+		MyLittleCatOven = new Oven(lab, new long[] {0, 300});
+		CatKettle = new Kettle(lab);
+		MyLittleDogFridge = new CoolingBox(lab, new long[] {40, 0});
+	}
+	
+	@Test
+	public void execute() {
+		// for some reason execute revert to an empty ExecutiveRecipe halfway through
+		lab.execute(recipeForDisaster, 5);
 	}
 }

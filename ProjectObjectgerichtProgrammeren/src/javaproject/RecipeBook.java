@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 
+import be.kuleuven.cs.som.annotate.Basic;
+
 public class RecipeBook {
 	
 	/**
@@ -58,6 +60,7 @@ public class RecipeBook {
 	 * @post	The recipe at the given page is removed
 	 * 			| getBook().contains(pageNumber) == false
 	 */
+	@Basic
 	public void remove(int pageNumber) {
 		book.remove(pageNumber);
 	}

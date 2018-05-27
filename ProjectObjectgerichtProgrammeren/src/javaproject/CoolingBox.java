@@ -55,7 +55,7 @@ public class CoolingBox extends TempDevice {
 	 * 			| super.move(lab)
 	 */
 	@Override
-	public void move(Laboratory lab) {
+	protected void move(Laboratory lab) {
 		getLab().setFridge(null);
 		super.move(lab);
 		lab.setFridge(this);

@@ -73,6 +73,7 @@ public class IngredientContainer {
 	/**
 	 * Get the name of this ingredient container
 	 */
+	@Raw @Basic
 	public String getName() {
 		return this.name;
 	}
@@ -124,6 +125,7 @@ public class IngredientContainer {
 	/**
 	 * Return the contents of this Ingredient Container
 	 */
+	@Raw @Basic
 	public AlchemicIngredient getContents() {
 		return this.content;
 	}
@@ -141,7 +143,7 @@ public class IngredientContainer {
 	 * @pre		capacity must be a valid capacity
 	 * 			| isValidCapacity(capacity)
 	 * @post	the capacity of this container is now the given capacity
-	 * 			| new.getCapacity() = capacity
+	 * 			| new.getCapacity() == capacity
 	 * 
 	 */
 	@Model

@@ -1,6 +1,9 @@
 package javaproject;
 
 import java.util.ArrayList;
+
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Raw;
 import javaproject.ExecutiveRecipe.Instruction;
 import quantity.Quant;
 
@@ -62,6 +65,7 @@ public class Recipe {
 		/**
 		 * Return the quantity of this amount
 		 */
+		@Raw @Basic
 		public int getQuantity() {
 			return this.quantity;
 		}
@@ -69,6 +73,7 @@ public class Recipe {
 		/**
 		 * Return the ingredient type of this amount
 		 */
+		@Raw @Basic
 		public IngredientType getIngredientType() {
 			return this.type;
 		}
@@ -76,13 +81,11 @@ public class Recipe {
 		/**
 		 * Return the unit of this amount
 		 */
+		@Raw @Basic
 		public Quant getUnit() {
 			return this.unit;
 		}
 	}
-	
-	
-	// TODO: Everything to the bottom of this becomes a subclass
 	
 	
 	
@@ -100,6 +103,7 @@ public class Recipe {
 	/**
 	 * Return a copy of the amounts
 	 */
+	@Raw @Basic
 	protected ArrayList<Amount> getAmounts() {
 		return new ArrayList<Amount>(this.amounts);
 	}
@@ -107,6 +111,7 @@ public class Recipe {
 	/**
 	 * Return a copy of the instructions
 	 */
+	@Raw @Basic
 	protected ArrayList<Instruction> getInstructions() {
 		return new ArrayList<Instruction>(this.instructions);
 	}

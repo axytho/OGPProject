@@ -15,7 +15,7 @@ import quantity.Quant;
  * 			| isValidNumberOfItems(getIngredients().size())
  * @invar	Device must be in a laboratory which contains the given device
  * 			| isInCorrectLab()
- * @author	Jonas
+ * @author	Jonas && Frederik
  * 				
  */
 
@@ -46,6 +46,7 @@ public abstract class Device {
 	/**
 	 * Return the lab in which this device is stationed
 	 */
+	@Raw @Basic
 	public Laboratory getLab() {
 		return this.lab;
 	}
@@ -57,6 +58,7 @@ public abstract class Device {
 	 * 			|if (getLab() == null):  result == false
 	 * @note	Specification deliberately left open
 	 */
+	@Raw
 	public boolean isInCorrectLab() {
 		return (getLab() != null);
 	}
@@ -91,7 +93,7 @@ public abstract class Device {
 	 * @note	the new lab is set to have this device, and the old lab loses this device in the subclass
 	 * @note	This device must satisfy the class invariants, i.e. the old lab cannot be null
 	 */
-	public void move(Laboratory lab) {
+	protected void move(Laboratory lab) {
 		setLab(lab);
 	}
 	
@@ -202,6 +204,7 @@ public abstract class Device {
 	 * 
 	 * @return	result == new ArrayList<AlchemicIngredient>(deviceStorage)
 	 */
+	@Raw @Basic
 	protected ArrayList<AlchemicIngredient> getIngredients() {
 		return new ArrayList<AlchemicIngredient>(deviceStorage); 
 	}
@@ -306,6 +309,7 @@ public abstract class Device {
 	 * 			This device does not sit in a valid lab
 	 * 			| !isInCorrectLab()
 	 */
+	@Basic
 	protected void emptyResult() throws IllegalArgumentException {
 		if (!isInCorrectLab()) {
 			throw new IllegalArgumentException("This device is not in the correct lab!");
@@ -332,6 +336,7 @@ public abstract class Device {
 	 * @return	True if the device is empty
 	 * 			| result == deviceStorage.empty()
 	 */
+	@Basic
 	public boolean isEmpty() {
 		return deviceStorage.empty();
 	}

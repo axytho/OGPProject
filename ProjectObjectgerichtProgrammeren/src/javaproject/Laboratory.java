@@ -6,7 +6,6 @@ import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Model;
 import be.kuleuven.cs.som.annotate.Raw;
 import javaproject.exception.*;
-import javaproject.exception.StorageCapacityException;
 import quantity.*;
 
 /**
@@ -15,18 +14,21 @@ import quantity.*;
  * @invar	Each laboratory must have proper ingredients in it
  * 			| hasProperIngredients()
  * @author Jonas && Frederik
+ * 
+ * @note	The names used to sort are given by getName()
+ * 			We assume that if there's a special name for an ingredient, that's the name that is searched,
+ * 			else the mixed name or simple name is used, depending on availability
  *
  */
 
 public class Laboratory {
-	// TODO: make it work for special name/mixed name
 	
 	/**
 	 * Create a laboratory with a given amount of storerooms
 	 * @param	storeroom
 	 * 			The capacity of this laboratory
 	 * @post	The capacity is set to the given amount of storerooms
-	 * 			| this.capacity = storeroom;
+	 * 			| new.getCapacity() == storeroom;
 	 */
 	
 	public Laboratory(int storeroom) {
@@ -98,6 +100,7 @@ public class Laboratory {
 	/**
 	 * Return the capacity of this laboratory
 	 */
+	@Raw @Basic
 	public int getCapacity() {
 		return this.capacity;
 	}
@@ -160,7 +163,7 @@ public class Laboratory {
 	 * 			| index < 0  || index >= getSize()
 	 */
 	@Basic @Raw
-	public AlchemicIngredient getIngredientAt(int index) throws IndexOutOfBoundsException {
+	private AlchemicIngredient getIngredientAt(int index) throws IndexOutOfBoundsException {
 		return storage.get(index);
 	}
 	
@@ -313,6 +316,7 @@ public class Laboratory {
 	 * @effect	The ingredient is at the correct index in the laboratory storage
 	 * 			| addIngredientAt(findFit(container.getContents().getName()), container.getContents())
 	 */
+	@Raw
 	private void addNewMixedIngredient(AlchemicIngredient ingredient) {
 		addIngredientAt(findFit(ingredient.getName()), ingredient);	
 	}
@@ -344,6 +348,7 @@ public class Laboratory {
 	 * @effect	The new ingredient is mixed with the existing ingredient and added to storage
 	 *			|	finishBrew(mix(container, Device.stuffInsideContainer(getIngredientAt(find(container.getContents().getName())))))	
 	 */
+	@Raw
 	private void addExtraIngredient(IngredientContainer container) throws IllegalStateException {
 		// mixing gives the wrong characteristic volatility, but we set it later
 		assert(containsIngredientName(container.getContents()));
@@ -361,7 +366,8 @@ public class Laboratory {
 	 * 			| finishBrew(alchemicIngredient, alchemicIngredient2, mix(alchemicIngredient, alchemicIngredient2))
 	 * @note	We get the contents from the containers before they're destroyed by mix
 	 */
-	public void mixCompletely(AlchemicIngredient alchemicIngredient, AlchemicIngredient alchemicIngredient2) {
+	@Raw
+	private void mixCompletely(AlchemicIngredient alchemicIngredient, AlchemicIngredient alchemicIngredient2) {
 		finishBrew(alchemicIngredient, alchemicIngredient2, mix(alchemicIngredient, alchemicIngredient2));
 	}
 	
@@ -378,7 +384,8 @@ public class Laboratory {
 	 * 			| changeContainerVolatilityToAverage(newIngredient, oldIngredient,  result)
 	 * 			| addNewMixedIngredient(result)
 	 */
-	public void finishBrew(AlchemicIngredient newIngredient, AlchemicIngredient oldIngredient, AlchemicIngredient result) {
+	@Raw
+	private void finishBrew(AlchemicIngredient newIngredient, AlchemicIngredient oldIngredient, AlchemicIngredient result) {
 		changeContainerVolatilityToAverage(newIngredient, oldIngredient,  result);
 		addNewMixedIngredient(result);	
 	}
@@ -401,7 +408,8 @@ public class Laboratory {
 	 *			|	newIngredient.getCharVolatility() * newIngredient.giveInLowestUnit()  )
 	 *			|	/ (existingIngredient.giveInLowestUnit() + newIngredient.giveInLowestUnit()))
 	 */
-	public void changeContainerVolatilityToAverage(AlchemicIngredient ingredient1, AlchemicIngredient ingredient2, AlchemicIngredient result) {
+	@Raw
+	private void changeContainerVolatilityToAverage(AlchemicIngredient ingredient1, AlchemicIngredient ingredient2, AlchemicIngredient result) {
 		result.setCharacteristicVolatility( (
 				ingredient1.getCharVolatility() *
 				ingredient1.giveInLowestUnit() +
@@ -426,6 +434,7 @@ public class Laboratory {
 	 * @return	The result of the kettle
 	 * 			| result == returnKettle().result()
 	 */
+	@Raw
 	private AlchemicIngredient mix(AlchemicIngredient alchemicIngredient, AlchemicIngredient alchemicIngredient2) {
 		removeIngredientAt(find(alchemicIngredient2.getName()));
 		returnKettle().clear();
@@ -446,6 +455,7 @@ public class Laboratory {
 	 * @post	The container is empty
 	 * 			| container.getContents() == null
 	 */
+	@Raw
 	private void addNewIngredient(IngredientContainer container) {
 		addIngredientAt(findFit(container.getContents().getName()), container.getContents());	
 		container.empty();	
@@ -456,7 +466,7 @@ public class Laboratory {
 	 * 
 	 * @param	container
 	 * 			The container which contains the ingredient we're bringing to standard temperature
-	 * @effect			
+	 * @effect	The contents of the container are brought to standard temperature		
 	 * 			| if (container.getContents().getTemperatureName() == AlchemicIngredient.Temperature.COOLED) 
 	 *			| returnFridge().changeTemperature(container.getContents().getType().getStandardTemperature())
 	 *			| returnFridge().add(container)
@@ -474,7 +484,7 @@ public class Laboratory {
 	 *			| || AlchemicIngredient.compareTemperature(container.getContents().getTemperature(), 
 	 * 			|  			container.getContents().getType().getStandardTemperature()) > 0 && !hasValidOven())
 	 */
-	
+	@Raw
 	private void bringToStandardTemp(IngredientContainer container) throws IllegalStateException {
 		if (container.getContents().getTemperatureState() == AlchemicIngredient.Temperature.COOLED) {
 			returnFridge().changeTemperature(container.getContents().getType().getStandardTemperature());
@@ -512,7 +522,7 @@ public class Laboratory {
 	 *			| || AlchemicIngredient.compareTemperature(container.getContents().getTemperature(), 
 	 * 			|  			container.getContents().getType().getStandardTemperature()) > 0 && !hasOven())
 	 */
-	
+	@Raw
 	private void bringToStandardState(IngredientContainer container) throws IllegalStateException {
 		if (container.getContents().getState() != container.getContents().getType().getState()) {
 			returnTransmogrifier().add(container);
@@ -532,6 +542,7 @@ public class Laboratory {
 	 * 			| result == !newIngredient.isTerminated() && (!containsIngredientName(newIngredient) 
 	 * 			|		|| getIngredientAt(find(newIngredient.getName())).getType() == newIngredient.getType())
 	 */
+	@Raw
 	public boolean isValidNewIngredient(AlchemicIngredient newIngredient) {
 		return newIngredient.isValidIngredient() && (!containsIngredientName(newIngredient) 
 					|| getIngredientAt(find(newIngredient.getName())).getType() == newIngredient.getType());
@@ -547,6 +558,7 @@ public class Laboratory {
 	 * 
 	 * @note	Why do we call it containsIngredientName and not containsIngredient? Because we're searching on name, and not type!
 	 */
+	@Raw
 	public boolean containsIngredientName(AlchemicIngredient newIngredient) {
 		return find(newIngredient.getName()) != -1;
 	}
@@ -563,6 +575,7 @@ public class Laboratory {
 	 * 			| else
 	 * 			|	result == -1
 	 */
+	@Raw
 	public int find(String name) {
 		int left = 0;
 		int right = getSize()-1;
@@ -597,6 +610,7 @@ public class Laboratory {
 	 * 			The given name is already in the database
 	 * 			| find(name) != -1
 	 */
+	@Raw
 	public int findFit(String name) throws IllegalArgumentException {
 		int left = 0;
 		int right = getSize();
@@ -673,7 +687,7 @@ public class Laboratory {
 			 * @see		StorageIterator
 			 * 
 			 * @post	The new position is one greater than the current position
-			 * 			| new.getNbElements() = old.getNbElements() - 1
+			 * 			| new.getNbElements() == old.getNbElements() - 1
 			 */
 			@Override
 			public void advance() throws IllegalStateException {
@@ -701,7 +715,6 @@ public class Laboratory {
 	}
 	
 	
-	// TODO: make it return a prettier quantity and write code
 	public String toString() {
 		String sum = "";
 		for (AlchemicIngredient ingredient : getStorage()) {
@@ -813,32 +826,32 @@ public class Laboratory {
 	/**
 	 * Return the oven
 	 */
-	@Raw
-	public Oven getOven() {
+	@Raw @Basic
+	protected Oven getOven() {
 		return this.LabOven;
 	}
 	
 	/**
 	 * Return the cooling box
 	 */
-	@Raw
-	public CoolingBox getFridge() {
+	@Raw @Basic
+	protected CoolingBox getFridge() {
 		return this.LabFridge;
 	}
 	
 	/**
 	 * Return the kettle
 	 */
-	@Raw
-	public Kettle getKettle() {
+	@Raw @Basic
+	protected Kettle getKettle() {
 		return this.LabKettle;
 	}
 	
 	/**
 	 * Return the transmogrifier
 	 */
-	@Raw
-	public Transmogrifier getTransmogrifier() {
+	@Raw @Basic
+	protected Transmogrifier getTransmogrifier() {
 		return this.LabTrans;
 	}
 	
@@ -939,6 +952,7 @@ public class Laboratory {
 	 * @return	This oven is not null
 	 * 			| LabOven != null
 	 */
+	@Raw
 	public boolean hasOven() {
 		return LabOven != null;
 	}
@@ -948,6 +962,7 @@ public class Laboratory {
 	 * @return	This oven is not null
 	 * 			| LabFridge != null
 	 */
+	@Raw
 	public boolean hasFridge() {
 		return LabFridge != null;
 	}
@@ -957,6 +972,7 @@ public class Laboratory {
 	 * @return	This oven is not null
 	 * 			| LabTrans != null
 	 */
+	@Raw
 	public boolean hasTransmogrifier() {
 		return LabTrans != null;
 	}
@@ -966,6 +982,7 @@ public class Laboratory {
 	 * @return	This oven is not null
 	 * 			| LabKettle != null
 	 */
+	@Raw
 	public boolean hasKettle() {
 		return LabKettle != null;
 	}

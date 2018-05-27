@@ -46,7 +46,7 @@ public class Transmogrifier extends Device {
 	 * 
 	 */
 	@Override
-	public void move(Laboratory lab) {
+	protected void move(Laboratory lab) {
 		getLab().setTransmogrifier(null);
 		super.move(lab);
 		lab.setTransmogrifier(this);
@@ -61,13 +61,14 @@ public class Transmogrifier extends Device {
 	 * 			| getIngredients().isEmpty() == true
 	 * @effect	Depending on the state, the quantity of the result is set to the proper transmogrified quantity
 	 * 			| 	if (getResult().getState() == State.Liquid)
-	 *			|		Integer nextQuantity = getResult().getTransmogrifiedQuant(State.Solid);
 	 *			|		getResult().setState(State.Solid);
-	 *			|		getResult().setQuantityTo(nextQuantity);
 	 *			|	else 
-	 *			|		Integer nextQuantity = getResult().getTransmogrifiedQuant(State.Liquid);
 	 *			|		getResult().setState(State.Liquid);
-	 *			|		getResult().setQuantityTo(nextQuantity);
+	 * @post	The quantity is set to the transmogrified quantity
+	 * 			| 	if (getResult().getState() == State.Liquid)
+	 * 			|		new.getResult().getQuantity() == getResult().getTransmogrifiedQuant(State.Solid)
+	 * 			| 	else
+	 * 			|		new.getResult().getQuantity() == getResult().getTransmogrifiedQuant(State.Liquid)
 	 */
 	@Override
 	public void execute() {
