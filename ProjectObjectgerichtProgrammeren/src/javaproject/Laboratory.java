@@ -1001,9 +1001,15 @@ public class Laboratory {
 	public void execute(Recipe recipe, int multiplier) {
 		ExecutiveRecipe executive = new ExecutiveRecipe(recipe);
 		executive.setFactor(multiplier);
-		for (ExecutiveRecipe.Instruction instruction: executive.getRecipe().getInstructions()) {
+		for (String instruction: executive.getRecipe().getInstructions()) {
 			try {
-				instruction.execute(this);
+				switch (instruction) {
+					case "add": executive.add(this);
+					case "heat": executive.heat(this);
+					case "cool": executive.cool(this);
+					case "mix": executive.mix(this);
+				}
+				
 			} catch (ExceedsStorageException e1) {
 				//System.err.println(String.valueOf(e1.getAmountAsked()) + " is more than " + String.valueOf(e1.getAmountAvailable()));
 				executive.returnToStorage(this);
@@ -1015,8 +1021,7 @@ public class Laboratory {
 				System.err.println("The ingredient described cannot be found in this laboratory");
 			}
 		}
-		ExecutiveRecipe.Instruction mix = executive.new Mix();
-		mix.execute(this);
+		executive.mix(this);
 	}
 	
 	

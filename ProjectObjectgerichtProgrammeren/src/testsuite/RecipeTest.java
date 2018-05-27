@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.junit.*;
 
 import javaproject.*;
-import javaproject.ExecutiveRecipe.Instruction;
 import javaproject.Recipe.Amount;
 import quantity.LQuant;
 import quantity.SQuant;
@@ -29,7 +28,7 @@ public class RecipeTest {
 	
 	@Before
 	public void setUpBeforeClass() {
-		recipeForDisaster = new Recipe(new ArrayList<Amount>(), new ArrayList<Instruction>());
+		recipeForDisaster = new Recipe(new ArrayList<Amount>(), new ArrayList<String>());
 		recipe = new ExecutiveRecipe(recipeForDisaster);
 		MercurialAcid = new IngredientType("Mercurial Acid", State.Liquid, new long[] {0 , 40}, 0.3);
 		Water = new IngredientType("Water", State.Liquid, new long[] {0, 20}, 0);
@@ -44,23 +43,23 @@ public class RecipeTest {
 		recipeAmount.add(recipeForDisaster.new Amount(3, SQuant.SPOON, Garlic));
 		recipeAmount.add(recipeForDisaster.new Amount(4, LQuant.DROP, BlackLotus));
 		recipeAmount.add(recipeForDisaster.new Amount(1, LQuant.SPOON, Mustard));
-		ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-		instructions.add(recipe.new Add());
-		instructions.add(recipe.new CoolDown());
-		instructions.add(recipe.new Add());
-		instructions.add(recipe.new HeatUp());
-		instructions.add(recipe.new Mix());
-		instructions.add(recipe.new Add());
-		instructions.add(recipe.new CoolDown());
-		instructions.add(recipe.new Mix());
-		instructions.add(recipe.new Add());
-		instructions.add(recipe.new HeatUp());
-		instructions.add(recipe.new Mix());
-		instructions.add(recipe.new HeatUp());
-		instructions.add(recipe.new Add());
-		instructions.add(recipe.new HeatUp());
-		instructions.add(recipe.new Add());
-		instructions.add(recipe.new Mix());
+		ArrayList<String> instructions = new ArrayList<String>();
+		instructions.add("add");
+		instructions.add("cool");
+		instructions.add("add");
+		instructions.add("heat");
+		instructions.add("mix");
+		instructions.add("add");
+		instructions.add("cool");
+		instructions.add("mix");
+		instructions.add("add");
+		instructions.add("heat");
+		instructions.add("mix");
+		instructions.add("heat");
+		instructions.add("add");
+		instructions.add("heat");
+		instructions.add("add");
+		instructions.add("mix");
 		recipeForDisaster= new Recipe(recipeAmount, instructions);	
 		
 		lab = new Laboratory(3);

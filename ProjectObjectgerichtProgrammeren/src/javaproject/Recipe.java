@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import be.kuleuven.cs.som.annotate.Basic;
 import be.kuleuven.cs.som.annotate.Raw;
-import javaproject.ExecutiveRecipe.Instruction;
 import quantity.Quant;
 
 public class Recipe {
@@ -19,9 +18,9 @@ public class Recipe {
 	 * @post	The amount list is set to  a copy of the given amount and the instruction list is set to a copy of the given isntructions
 	 * 			| new.getAmounts().equals(amount) && new.getinstructions().equals(instruction)
 	 */
-	public Recipe(ArrayList<Amount> amount, ArrayList<Instruction> instruction) {
+	public Recipe(ArrayList<Amount> amount, ArrayList<String> instruction) {
 		this.amounts = new ArrayList<Amount>(amount);
-		this.instructions = new ArrayList<Instruction>(instruction);
+		this.instructions = new ArrayList<String>(instruction);
 	}
 	
 	public class Amount {
@@ -93,7 +92,7 @@ public class Recipe {
 	/**
 	 * List containing all our instructions
 	 */
-	private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+	private ArrayList<String> instructions = new ArrayList<String>();
 	
 	/**
 	 * List containing all our amounts
@@ -112,8 +111,8 @@ public class Recipe {
 	 * Return a copy of the instructions
 	 */
 	@Raw @Basic
-	protected ArrayList<Instruction> getInstructions() {
-		return new ArrayList<Instruction>(this.instructions);
+	protected ArrayList<String> getInstructions() {
+		return new ArrayList<String>(this.instructions);
 	}
 	
 	
