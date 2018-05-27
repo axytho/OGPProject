@@ -20,10 +20,33 @@ public class Oven extends TempDevice {
 	 * 			| super(lab)
 	 * @effect	The temperature of this box is changed to the given temperature
 	 * 			| changeTemperature(temp)
+	 * @effect	The lab's device is set to the given device
+	 * 			| lab.setOven(this)
 	 */
 	public Oven(Laboratory lab, long[] temp) {
 		super(lab);
 		changeTemperature(temp);
+		lab.setOven(this);
+	}
+	
+	
+	/**
+	 * Move this device to the given lab
+	 * 
+	 * @param	lab
+	 * 			The lab to which we're moving the device
+	 * @post	The old lab no longer has this device
+	 * 			| old.getLab().getOven() == null 
+	 * @post	The new lab now has this device
+	 * 			| lab.getOven() == this
+	 * @effect	The super constructor sets this lab to the given lab
+	 * 			| super.move(lab)
+	 */
+	@Override
+	public void move(Laboratory lab) {
+		getLab().setOven(null);
+		super.move(lab);
+		lab.setOven(this);
 	}
 	
 	/**
@@ -35,7 +58,7 @@ public class Oven extends TempDevice {
 	 */
 	@Override
 	public boolean isInCorrectLab() {
-		return (getLab() != null && getLab().getOven() == this);
+		return (super.isInCorrectLab() && getLab().getOven() == this);
 	}
 
 	/**

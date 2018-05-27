@@ -12,9 +12,12 @@ public class Transmogrifier extends Device {
 	 * 			The laboratory in which our transmogrifier sits
 	 * @effect	We initialize a new device which sits in a given laboratory
 	 * 			| super(lab)
+	 * @effect	The lab's device is set to the given device
+	 * 			| lab.setTransmogrifier(this)
 	 */
 	public Transmogrifier(Laboratory lab) {
 		super(lab);
+		lab.setTransmogrifier(this);
 	}
 	
 	/**
@@ -26,7 +29,27 @@ public class Transmogrifier extends Device {
 	 */
 	@Override
 	public boolean isInCorrectLab() {
-		return (getLab() != null && getLab().getTransmogrifier() == this);
+		return (super.isInCorrectLab() && getLab().getTransmogrifier() == this);
+	}
+	
+	/**
+	 * Move this device to the given lab
+	 * 
+	 * @param	lab
+	 * 			The lab to which we're moving the device
+	 * @post	The old lab no longer has this device
+	 * 			| old.getLab().getTransmogrifier() == null
+	 * @post	The new lab now has this device
+	 * 			| lab.getTransmogrifier() == this
+	 * @effect	The super constructor sets this lab to the given lab
+	 * 			| super.move(lab)
+	 * 
+	 */
+	@Override
+	public void move(Laboratory lab) {
+		getLab().setTransmogrifier(null);
+		super.move(lab);
+		lab.setTransmogrifier(this);
 	}
 	
 	/**

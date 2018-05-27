@@ -17,9 +17,12 @@ public class Kettle extends Device {
 	 * 			The laboratory in which our kettle sits
 	 * @effect	We initialize a new device which sits in a given laboratory
 	 * 			| super(lab)
+	 * @effect	The lab's device is set to the given device
+	 * 			| lab.setKettle(this)
 	 */
 	public Kettle(Laboratory lab) {
 		super(lab);
+		lab.setKettle(this);
 	}
 	
 	/**
@@ -31,7 +34,26 @@ public class Kettle extends Device {
 	 */
 	@Override
 	public boolean isInCorrectLab() {
-		return (getLab() != null && getLab().getKettle() == this);
+		return (super.isInCorrectLab() && getLab().getKettle() == this);
+	}
+	
+	/**
+	 * Move this device to the given lab
+	 * 
+	 * @param	lab
+	 * 			The lab to which we're moving the device
+	 * @post	The old lab no longer has this devic
+	 * 			| old.getLab().getKettle() == null
+	 * @post	The new lab now has this device
+	 * 			| lab.getKettle() == this
+	 * @effect	The super constructor sets this lab to the given lab
+	 * 			| super.move(lab)
+	 */
+	@Override
+	public void move(Laboratory lab) {
+		getLab().setKettle(null);
+		super.move(lab);
+		lab.setKettle(this);
 	}
 
 	/**

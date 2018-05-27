@@ -68,7 +68,7 @@ public class IngredientContainer {
 	/**
 	 * The name of this ingredient container
 	 */
-	public String name = "";
+	private String name = "";
 	
 	/**
 	 * Get the name of this ingredient container
@@ -119,7 +119,7 @@ public class IngredientContainer {
 	/**
 	 * The contents of this Ingredient Container
 	 */
-	public AlchemicIngredient content = null;
+	private AlchemicIngredient content = null;
 	
 	/**
 	 * Return the contents of this Ingredient Container
@@ -133,7 +133,7 @@ public class IngredientContainer {
 	 * The capacity
 	 */
 	
-	public Quant capacity = null;
+	private Quant capacity = null;
 	
 	/**
 	 * @param	capacity

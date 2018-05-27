@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_c3T38GF6Eeiv3YmXi3jc2Q" name="ClassDiagram">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_dbCQEGF6Eeiv3YmXi3jc2Q">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_o7WxQGF9Eeiv3YmXi3jc2Q">
+    <importedPackage xmi:type="uml:Profile" href="pathmap://Papyrus_JAVA_PROFILES/java.profile.uml#_6TYLMN0yEd6P1qtlpBOZyg"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Package" xmi:id="_Z-0rEGF-Eeiv3YmXi3jc2Q" name="javaproject">
+    <packagedElement xmi:type="uml:Class" xmi:id="_MfVnIGF-Eeiv3YmXi3jc2Q" name="AlchemicIngredient" visibility="public">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_RYo7kGGCEeiv3YmXi3jc2Q" name="quantity" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_L0pmMGGQEeiv3YmXi3jc2Q" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_L0vs0GGQEeiv3YmXi3jc2Q" value="*"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_og_BEmGLEeiv3YmXi3jc2Q" name="type" visibility="private" type="_Pr3wYGGFEeiv3YmXi3jc2Q" association="_og-aAGGLEeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_og_oIGGLEeiv3YmXi3jc2Q" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_og_oIWGLEeiv3YmXi3jc2Q" value="1"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_t7X3EGGUEeiv3YmXi3jc2Q" name="mixlist" visibility="private" type="_Pr3wYGGFEeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_y-CfsGGUEeiv3YmXi3jc2Q"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_y-H_QGGUEeiv3YmXi3jc2Q" value="*"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_uVfAMGGUEeiv3YmXi3jc2Q" name="SpecialName" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_uoUcoGGUEeiv3YmXi3jc2Q" name="state" visibility="private" type="_Qn_O0GGPEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_9gcugGGUEeiv3YmXi3jc2Q" name="coldness" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_96iCcGGUEeiv3YmXi3jc2Q" name="hotness" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_-fQgIGGUEeiv3YmXi3jc2Q" name="maxValue" visibility="private" isStatic="true" aggregation="composite">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>
+      </ownedAttribute>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_Ou52AGF-Eeiv3YmXi3jc2Q" name="Operation1"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_2cGnMGGCEeiv3YmXi3jc2Q" name="IngredientContainer">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_AW3nMGGDEeiv3YmXi3jc2Q" name="name" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_bXuEwmGLEeiv3YmXi3jc2Q" name="capacity" visibility="private" type="_c44c4GGIEeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_bXur0GGLEeiv3YmXi3jc2Q" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_bXur0WGLEeiv3YmXi3jc2Q" value="1"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_JO6aYGGNEeiv3YmXi3jc2Q" name="Content" visibility="private" type="_MfVnIGF-Eeiv3YmXi3jc2Q" association="_JO4lMGGNEeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_JO7BcGGNEeiv3YmXi3jc2Q" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_JO7BcWGNEeiv3YmXi3jc2Q" value="1"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Pr3wYGGFEeiv3YmXi3jc2Q" name="IngredientType">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_MGiSUGGOEeiv3YmXi3jc2Q" name="simpleName" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_NwddgGGOEeiv3YmXi3jc2Q" name="standardTemperature" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_fJ_8MGGOEeiv3YmXi3jc2Q"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fKE0sGGOEeiv3YmXi3jc2Q" value="*"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_OVfdMGGOEeiv3YmXi3jc2Q" name="Volatility" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#double"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_djhRIGGPEeiv3YmXi3jc2Q" name="State" visibility="private" type="_Qn_O0GGPEeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Enumeration" xmi:id="_Qn_O0GGPEeiv3YmXi3jc2Q" name="State" visibility="public">
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_VE4Q4GGPEeiv3YmXi3jc2Q" name="Solid"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_VWSJ8GGPEeiv3YmXi3jc2Q" name="Liquid"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_YnNSsGGQEeiv3YmXi3jc2Q" name="Device" visibility="public" isAbstract="true">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_MifRsGGSEeiv3YmXi3jc2Q" name="deviceStorage" visibility="private" type="_MfVnIGF-Eeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_cACk0GGSEeiv3YmXi3jc2Q"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_cAIrcGGSEeiv3YmXi3jc2Q" value="*"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_NOMhIGGSEeiv3YmXi3jc2Q" name="result" visibility="private" type="_MfVnIGF-Eeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pq5yUGGSEeiv3YmXi3jc2Q"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_pq_R4GGSEeiv3YmXi3jc2Q" value="1"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_ijGUEGGQEeiv3YmXi3jc2Q" name="TempDevice">
+      <generalization xmi:type="uml:Generalization" xmi:id="_kWSTgGGREeiv3YmXi3jc2Q" general="_YnNSsGGQEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_WaM_4GGhEeiv3YmXi3jc2Q" name="temperature" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#long"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_gufTIGGhEeiv3YmXi3jc2Q" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_gun2AGGhEeiv3YmXi3jc2Q" value="*"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_l8c1gGGQEeiv3YmXi3jc2Q" name="Kettle">
+      <generalization xmi:type="uml:Generalization" xmi:id="_mRdmwGGREeiv3YmXi3jc2Q" general="_YnNSsGGQEeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_msQh0GGQEeiv3YmXi3jc2Q" name="Transmogrifier">
+      <generalization xmi:type="uml:Generalization" xmi:id="_oJZ_0GGREeiv3YmXi3jc2Q" general="_YnNSsGGQEeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_r858EGGQEeiv3YmXi3jc2Q" name="CoolingBox">
+      <generalization xmi:type="uml:Generalization" xmi:id="_rUGaMGGREeiv3YmXi3jc2Q" general="_ijGUEGGQEeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_suLA8GGQEeiv3YmXi3jc2Q" name="Oven">
+      <generalization xmi:type="uml:Generalization" xmi:id="_svO7cGGREeiv3YmXi3jc2Q" general="_ijGUEGGQEeiv3YmXi3jc2Q"/>
+    </packagedElement>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_FmfUcGGIEeiv3YmXi3jc2Q" name="quantity">
+    <packagedElement xmi:type="uml:Interface" xmi:id="_c44c4GGIEeiv3YmXi3jc2Q" name="Quant"/>
+    <packagedElement xmi:type="uml:Enumeration" xmi:id="_M899UGGJEeiv3YmXi3jc2Q" name="Lquant">
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_lxYSIGGJEeiv3YmXi3jc2Q" name="Drop"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_3zvEUGGJEeiv3YmXi3jc2Q" name="Spoon"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_4RrkkGGJEeiv3YmXi3jc2Q" name="Vial"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_4yytkGGJEeiv3YmXi3jc2Q" name="Bottle"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_650EcGGJEeiv3YmXi3jc2Q" name="Jug"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_7QpQEGGJEeiv3YmXi3jc2Q" name="Barrel"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_7pSZkGGJEeiv3YmXi3jc2Q" name="Storeroom"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Enumeration" xmi:id="_NXbEsGGJEeiv3YmXi3jc2Q" name="Squant">
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_FS7NUGGKEeiv3YmXi3jc2Q" name="Pinch"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_Fu4wkGGKEeiv3YmXi3jc2Q" name="Spoon"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_GEfNIGGKEeiv3YmXi3jc2Q" name="Sachet"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_GYREwGGKEeiv3YmXi3jc2Q" name="Box"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_GxOXUGGKEeiv3YmXi3jc2Q" name="Sack"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_HLc1MGGKEeiv3YmXi3jc2Q" name="Chest"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_HlklYGGKEeiv3YmXi3jc2Q" name="Storeroom"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Realization" xmi:id="__n35kGGKEeiv3YmXi3jc2Q" client="_M899UGGJEeiv3YmXi3jc2Q" supplier="_c44c4GGIEeiv3YmXi3jc2Q"/>
+    <packagedElement xmi:type="uml:Realization" xmi:id="_D0nm0GGLEeiv3YmXi3jc2Q" client="_NXbEsGGJEeiv3YmXi3jc2Q" supplier="_c44c4GGIEeiv3YmXi3jc2Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_og-aAGGLEeiv3YmXi3jc2Q" memberEnd="_og_BEmGLEeiv3YmXi3jc2Q _og_oImGLEeiv3YmXi3jc2Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_og_BEGGLEeiv3YmXi3jc2Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_og_BEWGLEeiv3YmXi3jc2Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_og_oImGLEeiv3YmXi3jc2Q" name="alchemicingredient" type="_MfVnIGF-Eeiv3YmXi3jc2Q" association="_og-aAGGLEeiv3YmXi3jc2Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_JO4lMGGNEeiv3YmXi3jc2Q" memberEnd="_JO6aYGGNEeiv3YmXi3jc2Q _JO7BcmGNEeiv3YmXi3jc2Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_JO5zUGGNEeiv3YmXi3jc2Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_JO5zUWGNEeiv3YmXi3jc2Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_JO7BcmGNEeiv3YmXi3jc2Q" name="ingredientcontainer" type="_2cGnMGGCEeiv3YmXi3jc2Q" association="_JO4lMGGNEeiv3YmXi3jc2Q"/>
+  </packagedElement>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_5TyYQGF9Eeiv3YmXi3jc2Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_5UCP4GF9Eeiv3YmXi3jc2Q" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/JAVA/1#/"/>
+    </eAnnotations>
+    <appliedProfile xmi:type="uml:Profile" href="pathmap://Papyrus_JAVA_PROFILES/java.profile.uml#_6TYLMN0yEd6P1qtlpBOZyg"/>
+  </profileApplication>
+</uml:Model>

@@ -10,6 +10,9 @@ import java.util.List;
 import be.kuleuven.cs.som.annotate.*;
 import quantity.*;
 
+// TODO: CHECK ALL VARIABLES ON BEING PRIVATE
+// TODO: CHECK ALL INVARS!
+// TODO: CHECK 7 ITEM LIST FEEDBACK PRACTICUM 2
 /**
  * 
  * 
@@ -34,30 +37,6 @@ import quantity.*;
 public class AlchemicIngredient {
 	
 	
-//	/**
-//	 * Create a new Alchemic Ingredient Type
-//	 * 
-//	 * @param	Type
-//	 * 			The type of this ingredient
-//	 * @post	The type of this ingredient is set to the given type
-//	 * 			If the type is not a valid type, the type is set to Aether, a default type signifying "nothing".
-//	 * 			| setType(type)
-//	 * @post	The quantity of this Alchemic ingredient is 0
-//	 * 			| for (each index in 1..getSize())
-//	 * 			|		getItemAt(index)  == 0
-//	 * @post	The maximum temperature is set to 10000
-//	 * 			| getMaxTemperature() == 10000
-//	 */
-//	public AlchemicIngredient(IngredientType type) {
-//		if (isValidType(type)) {
-//			this.type = type;
-//		} else {
-//			this.type = new IngredientType("Aether", State.Liquid, new long[] {0, 0} );
-//		}
-//		setQuantityToZero();
-//		setState(getType().getState());
-//		setMaxTemperature(10000);
-//	}
 	
 	/**
 	 * Create a new Alchemic Ingredient Type with a given Type
@@ -92,8 +71,6 @@ public class AlchemicIngredient {
 	 * 			| createVolatility()
 	 * 
 	 */
-	// TODO: delete or keep: @note	This is private because we want a user to give us a quantity as a full barrel or something like that
-	
 	public AlchemicIngredient(IngredientType type, ArrayList<Integer> quantity) {
 		if (isValidType(type)) {
 			this.type = type;
@@ -107,30 +84,29 @@ public class AlchemicIngredient {
 		createVolatility();
 	}
 	
-//	/**
-//	 * Create a new alchemic ingredient with a given type and a quantity given in a solid unit
-//	 * 
-//	 * @param	type
-//	 * 			The type of this ingredient
-//	 * @param	unit
-//	 * 			The unit of our alchemic ingredient
-//	 * @post	The quantity is validly carried over
-//	 * 			| isCarriedOver() == true
-//	 * @post	The type of this ingredient is set to the given type
-//	 * 			If the type is not a valid type, the type is set to Aether, a default type signifying "nothing".
-//	 * 			| setType(type)
-//	 * @post	The quantity of our alchemic ingredient is now equal to 1 unit of the given unit
-//	 * 			| giveInLowestUnit(unit) == new.convertToLowestUnit()
-//	 */
-//	public AlchemicIngredient(IngredientType type, Quant unit) { 
-//		if (isValidType(type)) {
-//			this.type = type;
-//		} else {
-//			this.type = new IngredientType("Aether", State.Liquid);
-//		}
-//		
-//		this(type, giveInLowestUnit(unit));
-//	}
+	/**
+	 * Create a new alchemic ingredient with a given type and a quantity given as a unit and an amount
+	 * 
+	 * @param	type
+	 * 			The type of this ingredient
+	 * @param	unit
+	 * 			The unit of our alchemic ingredient
+	 * @param	amount
+	 * 			The amount of the unit that is used to make this 
+	 * @post	The quantity is validly carried over
+	 * 			| isCarriedOver() == true
+	 * @post	The quantity of our alchemic ingredient is now equal to 1 unit of the given unit
+	 * 			| convertToLowestUnit(unit) * amount == new.giveInLowestUnit()
+	 * @effect	We create an alchemic ingredient with the given type
+	 * 			| this(type, getZeroQuantityList(100))
+	 */
+	public AlchemicIngredient(int amount, Quant unit, IngredientType type) {
+		// making the bold assumption that there won't ever be more than a 100 different units (there are 7 right now)
+		// and our setter trims them to the correct size
+		this(type, getZeroQuantityList(100));
+		setQuantityTo(convertToLowestUnit(unit) * amount);
+		
+	}
 	
 	
 	/***************************************************************
@@ -158,11 +134,11 @@ public class AlchemicIngredient {
 	 */
 	
 	public AlchemicIngredient(AlchemicIngredient ingredient) {
+		this.type = ingredient.getType();
 		this.mixList = ingredient.getIngredientMixList();
 		this.setSpecialName(ingredient.getSpecialName());
-		this.setQuantity(ingredient.getQuantity());
-		this.type = ingredient.getType();
 		this.setState(ingredient.getState());
+		this.setQuantity(ingredient.getQuantity());
 		this.setColdness(ingredient.getColdness());
 		this.setHotness(ingredient.getHotness());
 		this.setCharacteristicVolatility(ingredient.getCharVolatility());
@@ -576,13 +552,13 @@ public class AlchemicIngredient {
 	 * 			| isValidQuantity(quantity)
 	 * @post	The quantity is validly carried over
 	 * 			| isCarriedOver() == true 
-	 * @post	The quantity of this Alchemic ingredient is to quantity
-	 * 			| new.getQuantity() = quantity;
+	 * @post	The quantity of this Alchemic ingredient is equal to quantity trimmed to the correct size
+	 * 			| new.getQuantity() = quantity.subList(0, getSize());
 	 * 
 	 */
 	@Model
 	private void setQuantity(ArrayList<Integer> quantity) {
-		this.quant = new ArrayList<Integer>(quantity);
+		this.quant = new ArrayList<Integer>(new ArrayList<Integer>(quantity).subList(0, getConversionList().size()));
 		carryOver();
 	}
 	

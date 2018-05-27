@@ -24,13 +24,18 @@ public abstract class Device {
 	/**
 	 * Create a new device
 	 * 
+	 * @param	lab
+	 * 			The in which this device is placed
 	 * @post	Device storage is empty
 	 * 			| new.isEmpty() == true
 	 * @post	The result is null
 	 * 			| new.getResult() == null
+	 * @effect	The lab is set to the given lab
+	 * 			| setLab(lab)
+	 * @effect	The lab's device is set to the given device
 	 */
 	public Device(Laboratory lab) {
-		this.lab = lab;
+		setLab(lab);
 	}
 	
 	/**
@@ -71,6 +76,23 @@ public abstract class Device {
 			throw new IllegalArgumentException("Invalid Lab");
 		}
 		this.lab = lab;
+	}
+	
+	/**
+	 * Move this device to the given laboratory
+	 * 
+	 * @param	lab
+	 * 			The lab to which we're moving the device
+	 * @effect	The lab is set to the given lab
+	 * 			| setLab(lab)
+	 * @post	The old lab no longer has this device
+	 * @post	The new lab now has this device
+	 * 
+	 * @note	the new lab is set to have this device, and the old lab loses this device in the subclass
+	 * @note	This device must satisfy the class invariants, i.e. the old lab cannot be null
+	 */
+	public void move(Laboratory lab) {
+		setLab(lab);
 	}
 	
 	/**
@@ -281,6 +303,9 @@ public abstract class Device {
 	 * @throws	IllegalStateException
 	 * 			There are too many ingredients for this device
 	 * 			| !isValidNumberOfIngredients(getIngredients().size())
+	 * @throws	IllegalArgumentException
+	 * 			This device does not sit in a valid lab
+	 * 			| !isInCorrectLab()
 	 */
 	public void execute() throws EmptyResultException, IllegalStateException {
 		if (!isInCorrectLab()) {
