@@ -73,7 +73,12 @@ public class Laboratory {
 		}
 
 		AlchemicIngredient result = new AlchemicIngredient(ingredient);
-		ingredient.setQuantityTo(amountInStorage - amountToWithdraw);
+		
+		if (amountInStorage - amountToWithdraw != 0) {
+			ingredient.setQuantityTo(amountInStorage - amountToWithdraw);
+		} else {
+			removeIngredientAt(find(name));
+		}
 		result.setQuantityTo(amountToWithdraw);
 		return Device.stuffInsideContainer(result);
 	}
@@ -81,7 +86,7 @@ public class Laboratory {
 	/**
 	 * The capacity of this laboratory in storerooms
 	 */
-	public int capacity = 0;
+	private int capacity = 0;
 	
 	/**
 	 * Return the capacity of this laboratory
@@ -209,6 +214,24 @@ public class Laboratory {
 		return true;
 	}
 	
+	/**
+	 * Remove the ingredient at the given index from this laboratory.
+	 *
+	 * @param 	index
+	 *        	The index from the item to remove.
+	 * @post	This laboratory no longer has the item at the given index as an item
+	 * 			| !new.containsIngredientName(getIngredientAt(index).getName())
+	 * @post  	All ingredients to the right of the removed ingredient
+	 *        	are shifted left by 1 position.
+	 *        	| for each I in index+1..getSize()-1:
+	 *        	|   new.getIngredientAt(I-1) == old.getIngredientAt(I)
+	 * @post  	The number of items has decreased by one
+	 *        	| new.getSize() == getSize() - 1
+	 */
+	@Raw @Model 
+	private void removeIngredientAt(int index) throws IndexOutOfBoundsException{
+		storage.remove(index);
+	}
 	
 	
 	/**
@@ -235,9 +258,7 @@ public class Laboratory {
 			throw new StorageCapacityException(this, container);
 		}
 		if (!this.isValidNewIngredient(container.getContents())) {
-			throw new IllegalArgumentException("Cannot have an alchemic ingredient with an ingredient type whose name "
-					+ "is equal to another ingredient in this laboratory, but whose type is not the same (i.e. an ingredient BlueCat named cat"
-					+ "and an ingredient RedCat named cat cannot sit in the same directory)");
+			throw new IllegalArgumentException("Not a valid new ingredient");
 		}
 		bringToStandardTemp(container);
 		bringToStandardState(container);
@@ -399,7 +420,7 @@ public class Laboratory {
 	 * 			|		|| getIngredientAt(find(newIngredient.getName())).getType() == newIngredient.getType())
 	 */
 	public boolean isValidNewIngredient(AlchemicIngredient newIngredient) {
-		return !newIngredient.isTerminated() && (!containsIngredientName(newIngredient) 
+		return newIngredient.isValidIngredient() && (!containsIngredientName(newIngredient) 
 					|| getIngredientAt(find(newIngredient.getName())).getType() == newIngredient.getType());
 	}
 	
@@ -582,23 +603,23 @@ public class Laboratory {
 	/**
 	 * The oven of our lab
 	 */
-	Oven LabOven = null;
+	private Oven LabOven = null;
 	
 	/**
 	 * The fridge of our lab
 	 */
 	
-	CoolingBox LabFridge = null;
+	private CoolingBox LabFridge = null;
 	
 	/**
 	 * The transmogrifier of our lab
 	 */
-	Transmogrifier LabTrans = null;
+	private Transmogrifier LabTrans = null;
 	
 	/**
 	 * The Kettle of our lab
 	 */
-	Kettle LabKettle = null;
+	private Kettle LabKettle = null;
 	
 	/**
 	 * Add a new device to this laboratory from a different laboratory

@@ -13,6 +13,7 @@ import quantity.*;
 // TODO: CHECK ALL VARIABLES ON BEING PRIVATE
 // TODO: CHECK ALL INVARS!
 // TODO: CHECK 7 ITEM LIST FEEDBACK PRACTICUM 2
+// TODO: Heated/Danger total name
 /**
  * 
  * 
@@ -21,9 +22,9 @@ import quantity.*;
  * @invar	Temperature must be valid
  * 			| isValidTemperature(getTemperature())
  * @invar	Type must be valid
- * 			| isValidType()
+ * 			| isValidType(getType())
  * @invar	Quantity must be valid
- * 			| isValidQuantity()
+ * 			| isValidQuantity(getQuantity())
  * @invar	Quantity is carried over from smaller quantities to larger quantities
  * 			| isCarriedOver()
  * @invar	Is not terminated
@@ -105,6 +106,7 @@ public class AlchemicIngredient {
 		// and our setter trims them to the correct size
 		this(type, getZeroQuantityList(100));
 		setQuantityTo(convertToLowestUnit(unit) * amount);
+		carryOver();
 		
 	}
 	
@@ -142,6 +144,26 @@ public class AlchemicIngredient {
 		this.setColdness(ingredient.getColdness());
 		this.setHotness(ingredient.getHotness());
 		this.setCharacteristicVolatility(ingredient.getCharVolatility());
+	}
+	
+	/***************************************************************
+	 * Full checker
+	 ***************************************************************/
+	
+	/**
+	 * Check whether this ingredient is a valid ingredient
+	 * 
+	 * @return	This ingredient has a valid volatility, temperature, type, quantity, 
+	 * 			the quantity is carried over and this ingredient has not been terminated
+	 * 			|isValidCharVolatility(getCharVolatility()) && isValidTemperature(getTemperature())
+	 *			| && isValidType(getType()) && isValidQuantity(getQuantity()) && isCarriedOver()
+	 *			| 	&& !isTerminated()
+	 */
+	
+	public boolean isValidIngredient() {
+		return isValidCharVolatility(getCharVolatility()) && isValidTemperature(getTemperature())
+				&& isValidType(getType()) && isValidQuantity(getQuantity()) && isCarriedOver()
+					&& !isTerminated();
 	}
 	
 	/***************************************************************

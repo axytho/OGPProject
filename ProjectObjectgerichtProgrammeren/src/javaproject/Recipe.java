@@ -77,25 +77,25 @@ public class Recipe {
 	/**
 	 * List containing all our instructions
 	 */
-	public ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+	private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 	
 	/**
 	 * List containing all our amounts
 	 */
-	public ArrayList<Amount> amounts = new ArrayList<Amount>();
+	private ArrayList<Amount> amounts = new ArrayList<Amount>();
 	
 	/**
-	 * Return the amounts
+	 * Return a copy of the amounts
 	 */
-	public ArrayList<Amount> getAmounts() {
-		return this.amounts;
+	protected ArrayList<Amount> getAmounts() {
+		return new ArrayList<Amount>(this.amounts);
 	}
 	
 	/**
-	 * Get the instructions
+	 * Return a copy of the instructions
 	 */
-	public ArrayList<Instruction> getInstructions() {
-		return this.instructions;
+	protected ArrayList<Instruction> getInstructions() {
+		return new ArrayList<Instruction>(this.instructions);
 	}
 	
 	
