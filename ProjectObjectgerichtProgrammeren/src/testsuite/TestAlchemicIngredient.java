@@ -64,37 +64,7 @@ public class TestAlchemicIngredient {
 	}
 	
 
-	public void testIsValidMixedName()	{
-		assertTrue(AlchemicIngredient.isValidMixedName("Heated Coke mixed with Beer, Cooled Water , Vodka, Martini, Cider and Tomato Juice"));
-		assertFalse(AlchemicIngredient.isValidMixedName("Heated Coke mixed with Beer, Cooled Water mixed with Vodka, Martini, Cider and Tomato Juice"));
-		assertFalse(AlchemicIngredient.isValidMixedName("Heated Coke mixed with Beer, Cooled Water , Vodka, martini, Cider and Tomato Juice"));
-		assertFalse(AlchemicIngredient.isValidMixedName("Heated Coke mixed with Beer, Cooled Water , Vodka, Martini, Cider, Tomato Juice"));
-		assertFalse(AlchemicIngredient.isValidMixedName("Heated Coke, Beer, Cooled Water , Vodka, Martini, Cider and Tomato Juice"));
-		assertTrue(AlchemicIngredient.isValidMixedName("Heated Coke mixed with Beer"));
-		assertTrue(AlchemicIngredient.isValidMixedName("Heated Coke"));
-		assertTrue(AlchemicIngredient.isValidMixedName("Garlic mixed with Imp Gas, Mercurial Acid and Water"));
-		
-	}
-	
 
-	public void testIsValidCombinedName() {
-		assertTrue(AlchemicIngredient.isValidCombinedName("Heated Red Eye Special"));
-		assertTrue(AlchemicIngredient.isValidCombinedName("Red Eye Special"));
-		assertFalse(AlchemicIngredient.isValidCombinedName("Red Heated Eye Special"));
-		assertFalse(AlchemicIngredient.isValidCombinedName("Heated red Eye Special"));
-		assertFalse(AlchemicIngredient.isValidCombinedName("CoKe"));
-	}
-	
-
-	public void testIsValidTotalName() {
-		assertTrue(AlchemicIngredient.isValidTotalName("Heated Red Eye Special (Heated Coke mixed with Beer,"
-				+ " Cooled Water , Vodka, Martini, Cider and Tomato Juice)"));
-		assertFalse(AlchemicIngredient.isValidTotalName("Heated Red Eye Special (Coke) (Heated Coke mixed with Beer, Vodka, Cider and Tomato Juice)"));
-		assertTrue(AlchemicIngredient.isValidTotalName("Coke (Thee)"));
-		assertFalse(AlchemicIngredient.isValidTotalName("CoKe (Thee)"));
-		assertFalse(AlchemicIngredient.isValidTotalName("Coke (mixed with)"));
-		assertFalse(AlchemicIngredient.isValidTotalName("Thee (Po)"));
-	}
 	
 	@Test
 	public void testIngredientContainer() {

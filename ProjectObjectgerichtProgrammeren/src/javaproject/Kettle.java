@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javaproject.exception.EmptyContainerException;
 import quantity.*;
 
 public class Kettle extends Device {
@@ -62,8 +63,7 @@ public class Kettle extends Device {
 	 * @effect	The ingredient list is cleared
 	 * 			| clear()
 	 * @post	The result of this device is set to a new Alchemic Ingredient
-	 * 			| getResult() == new AlchemicIngredient(new IngredientType(null, findState(), findStandardTemperature(), 
-	 * 			|										findTheoreticalVolatility()), findQuantity())
+	 * 			| getResult() == new AlchemicIngredient(getType(), findQuantity())
 	 * @effect	The ingredients of this kettle are added to the mix list of the new ingredient
 	 * 			| addMixList(getResult())
 	 * @post	The characteristic volatility is set to the correct characteristic volatility
@@ -72,18 +72,56 @@ public class Kettle extends Device {
 	 * 			| getResult().getTemperature() == findTemperature()
 	 * @effect	We execute this device
 	 * 			| super.execute()
+	 * @effect	We terminate all ingredients
+	 * 			| terminateAll()
 	 */
 	@Override
 	public void execute() {		
 		super.execute();
-		IngredientType type = new IngredientType(null, findState(), findStandardTemperature(), findTheoreticalVolatility());
+		IngredientType type = getType();
 		AlchemicIngredient ingredient = new AlchemicIngredient(type, findQuantity());
 		ingredient.setCharacteristicVolatility(findCharacteristicVolatility());
 		ingredient.changeTempTo(findTemperature());
 		addMixList(ingredient);
 		setResult(ingredient);
+		terminateAll();
 		clear();
 	}
+	/**
+	 * Terminate all ingredients
+	 * 
+	 * @post	Each ingredient in our storage is terminated
+	 * 			| for each ingredient in getIngredients():
+	 * 			|		ingredient.isTerminated() == true
+	 */
+	private void terminateAll() {
+		for (AlchemicIngredient ingredient : getIngredients()) {
+			ingredient.terminate();
+		}
+	}
+	
+	/**
+	 * Get the type of the result
+	 * 
+	 * @return	A new ingredient type if you mix two different ingredients, else the same ingredient
+	 * 			| for each ingredient in getIngredients():
+	 * 			| 	if ingredient.getType() == getIngredients().get(0).getType():
+	 * 			|		result == getIngredients().get(0).getType()
+	 * 			| 	else
+	 * 			|		result == new IngredientType(null, findState(), findStandardTemperature(), findTheoreticalVolatility())
+	 * 
+	 */
+	private IngredientType getType() {
+		IngredientType firstType = getIngredients().get(0).getType();
+		for (AlchemicIngredient ingredient : getIngredients()) {
+			if (firstType != ingredient.getType()) {
+				return new IngredientType(null, findState(), findStandardTemperature(), findTheoreticalVolatility());
+			}
+		}
+		return firstType;
+		
+	}
+	
 	
 	/**
 	 * Mix the ingredients in the kettle, and give a new name to the result
@@ -108,7 +146,7 @@ public class Kettle extends Device {
 	 * @param	result
 	 * 			The result of our kettle
 	 * @post	The mix list contains every type of every ingredient in the kettle, but each only once
-	 * 			| for each ingredient in getIngredients:
+	 * 			| for each ingredient in getIngredients():
 	 *			|	for each ingredientType in ingredient.getIngredientMixList():
 	 *			| 		result.getIngredientMixList().contains(ingredientType)
 	 */
@@ -345,6 +383,39 @@ public class Kettle extends Device {
 		}
 		
 		return resultList;
+	}
+	
+	/**
+	 * Add a certain ingredient
+	 * 
+	 * @param	ingredient
+	 * 			The container which we're adding
+	 * @post	The content of the container is now stored in the device
+	 * 			| new.getIngredients().contains(container) == true
+	 * @post	If the device can only hold the current number of ingredients, the last ingredient in the device is replaced 
+	 * 			by the ingredient in the container and the last ingredient is terminated.
+	 * 			| new.getIngredients().contains(old.getIngredients().get(getIngredients().size() - 1) == false
+	 * 			| && old.getIngredients().get(getIngredients().size() - 1).isTerminated() == true
+	 * @throws	IllegalArgumentException
+	 * 			The alchemic ingredient you're trying to add has already been terminated
+	 * 			| container.getContents().isTerminated()
+	 * @throws	IllegalArgumentException
+	 * 			This device does not sit in a valid lab
+	 * 			| !isInCorrectLab()
+	 */
+	
+	
+	public void add(AlchemicIngredient ingredient) throws EmptyContainerException, IllegalArgumentException {
+		if (!isInCorrectLab()) {
+			throw new IllegalArgumentException("This device is not in the correct lab!");
+		}
+		if (ingredient.isTerminated()) {
+			throw new IllegalArgumentException("Container's ingredient is terminated!");
+		}
+		if (!isValidNumberOfItems(getIngredients().size() +1)) {
+			pop().terminate();
+		} 
+		push(ingredient);	
 	}
 	
 	

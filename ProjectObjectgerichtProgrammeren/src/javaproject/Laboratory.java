@@ -57,12 +57,19 @@ public class Laboratory {
 	 * @throws	ExceedsStorageException
 	 * 			Amount asked exceeds the amount in the storage of the lab
 	 * 			| getIngredientAt(find(name)).giveInLowestUnit() < getIngredientAt(find(name)).convertToLowestUnit(unit) * amount
+	 * @throws	IllegalArgumentException
+	 * 			The unit requested does not exist for the state of this ingredient
+	 * 			| getIngredientAt(find(name)) != unit.getType()
 	 */
-	public IngredientContainer get(String name, Quant unit, int amount) throws NameNotFoundException, ExceedsContainerCapacityException, ExceedsStorageException {
+	public IngredientContainer get(String name, Quant unit, int amount) 
+				throws NameNotFoundException, ExceedsContainerCapacityException, ExceedsStorageException, IllegalArgumentException {
 		if (find(name) == -1 ) {
 			throw new NameNotFoundException(name, this);
 		}
 		AlchemicIngredient ingredient = getIngredientAt(find(name));
+		if (ingredient.getState() != unit.getType()) {
+			throw new IllegalArgumentException("The unit requested does not exist for the state of this ingredient");
+		}
 		int amountInStorage = ingredient.giveInLowestUnit();
 		int amountToWithdraw = ingredient.convertToLowestUnit(unit) * amount;
 		if (amountToWithdraw > ingredient.convertToLowestUnit(ingredient.getHighestContainerQuantity())) {
@@ -245,7 +252,7 @@ public class Laboratory {
 	 * 			| bringToStandardTemp(container)
 	 * @effect	The ingredients of our container are brought to standard state
 	 * 			| bringToStandardState(container)
-	 * @throws	emptyContainerException
+	 * @throws	EmptyContainerException
 	 * 			The container you're adding is empty
 	 * 			| container.getContents() == null
 	 */
@@ -267,6 +274,18 @@ public class Laboratory {
 		} else {
 			addNewIngredient(container);
 		}
+	}
+	
+	/**
+	 * Add an ingredient resulting from a mix between 2 ingredients with the same name
+	 * 
+	 * @param	ingredient
+	 * 			The ingredient we're adding
+	 * @effect	The ingredient is at the correct index in the laboratory storage
+	 * 			| addIngredientAt(findFit(container.getContents().getName()), container.getContents())
+	 */
+	private void addNewMixedIngredient(AlchemicIngredient ingredient) {
+		addIngredientAt(findFit(ingredient.getName()), ingredient);	
 	}
 	
 	/**
@@ -293,39 +312,104 @@ public class Laboratory {
 	 * @throws	IllegalStateException
 	 * 			This laboratory does not have a kettle
 	 * 			| !hasKettle()
-	 * @effect 	We add both the contents of our container and the ingredient with the same name to a kettle and mix
-	 * 			| getKettle().add(Device.stuffInsideContainer(getIngredientAt(find(container.getContents().getName()))))
-	 * 			| 		getKettle().add(container);
-	 *			|	getKettle().execute();
-	 *			|	container = getKettle().result();
-	 *			|	container.getContents().setCharacteristicVolatility( (
-	 *			|	getIngredientAt(find(container.getContents().getName())).getCharVolatility() *
-	 *			|	getIngredientAt(find(container.getContents().getName())).giveInLowestUnit() +
-	 *			|	container.getContents().getCharVolatility() * container.getContents().giveInLowestUnit()  )
-	 *			|	/ (getIngredientAt(find(container.getContents().getName())).giveInLowestUnit() 
-	 *			|							+ container.getContents().giveInLowestUnit()));
-	 *
+	 * @effect	The new ingredient is mixed with the existing ingredient and added to storage
+	 *			|	finishBrew(mix(container, Device.stuffInsideContainer(getIngredientAt(find(container.getContents().getName())))))	
 	 */
 	private void addExtraIngredient(IngredientContainer container) throws IllegalStateException {
 		// mixing gives the wrong characteristic volatility, but we set it later
 		assert(containsIngredientName(container.getContents()));
-		AlchemicIngredient newIngredient = container.getContents();
-		AlchemicIngredient existingIngredient = getIngredientAt(find(container.getContents().getName()));
-		getKettle().add(Device.stuffInsideContainer(existingIngredient));
-		getKettle().add(container);
+		mixCompletely(container.getContents(), getIngredientAt(find(container.getContents().getName())));
+	}
+	
+	/**
+	 * Finish adding the ingredient
+	 * 
+	 * @param	alchemicIngredient
+	 * 			The first ingredient
+	 * @param	alchemicIngredient2
+	 * 			The second ingredient 
+	 * @effect	Finish the brew with the resulting container from mix and the two ingredient container
+	 * 			| finishBrew(alchemicIngredient, alchemicIngredient2, mix(alchemicIngredient, alchemicIngredient2))
+	 * @note	We get the contents from the containers before they're destroyed by mix
+	 */
+	public void mixCompletely(AlchemicIngredient alchemicIngredient, AlchemicIngredient alchemicIngredient2) {
+		finishBrew(alchemicIngredient, alchemicIngredient2, mix(alchemicIngredient, alchemicIngredient2));
+	}
+	
+	/**
+	 * Finish adding the ingredient
+	 * 
+	 * @param	result
+	 * 			The result to be added
+	 * @param	newIngredient
+	 * 			The new ingredient
+	 * @param	oldIngredient
+	 * 			The old ingredient
+	 * @effect	Change the volatility of the given ingredient in the container and add to laboratory
+	 * 			| changeContainerVolatilityToAverage(newIngredient, oldIngredient,  result)
+	 * 			| addNewMixedIngredient(result)
+	 */
+	public void finishBrew(AlchemicIngredient newIngredient, AlchemicIngredient oldIngredient, AlchemicIngredient result) {
+		changeContainerVolatilityToAverage(newIngredient, oldIngredient,  result);
+		addNewMixedIngredient(result);	
+	}
+	
+
+	
+	/**
+	 * Change the volatility of the ingredient in a container so it is the average of the 2 given ingredients
+	 * 
+	 * @param	ingredient1
+	 * 			The first ingredient
+	 * @param	ingredient2
+	 * 			The second ingredient
+	 * @param	result
+	 * 			The result in which the to-be-changed ingredient resides
+	 * @effect	The characteristic volatility of the result is set to the average of the two given ingredients
+	 * 			|result.setCharacteristicVolatility( (
+	 *			|	existingIngredient.getCharVolatility() *
+	 *			|	existingIngredient.giveInLowestUnit() +
+	 *			|	newIngredient.getCharVolatility() * newIngredient.giveInLowestUnit()  )
+	 *			|	/ (existingIngredient.giveInLowestUnit() + newIngredient.giveInLowestUnit()))
+	 */
+	public void changeContainerVolatilityToAverage(AlchemicIngredient ingredient1, AlchemicIngredient ingredient2, AlchemicIngredient result) {
+		result.setCharacteristicVolatility( (
+				ingredient1.getCharVolatility() *
+				ingredient1.giveInLowestUnit() +
+				ingredient2.getCharVolatility() * ingredient2.giveInLowestUnit()  )
+				/ (ingredient1.giveInLowestUnit() + ingredient2.giveInLowestUnit()));
+	}
+	
+	/**
+	 * Mix two ingredient containers with each other
+	 * @param	alchemicIngredient
+	 * 			The first ingredient
+	 * @param	alchemicIngredient2
+	 * 			The second ingredient
+	 * @effect	The two ingredients are mixed after the kettle is cleared of previous ingredients and the old ingredient is removed from storage
+	 * 			(and the result is requested, clearing the result of the kettle)
+	 * 			|	removeIngredientAt(find(alchemicIngredient2.getContents().getName()))
+	 * 			|	getKettle().clear()
+	 * 			|	getKettle().add(ingredient1)
+	 * 			|	getKettle().add(ingredient2)
+	 * 			|	getKettle().execute()
+	 * 			|	getKettle().result() 
+	 * @return	The result of the kettle
+	 * 			| result == getKettle().result()
+	 */
+	private AlchemicIngredient mix(AlchemicIngredient alchemicIngredient, AlchemicIngredient alchemicIngredient2) {
+		removeIngredientAt(find(alchemicIngredient2.getName()));
+		getKettle().clear();
+		getKettle().add(alchemicIngredient);
+		getKettle().add(alchemicIngredient2);
 		getKettle().execute();
-		container = getKettle().result();
-		container.getContents().setCharacteristicVolatility( (
-				existingIngredient.getCharVolatility() *
-				existingIngredient.giveInLowestUnit() +
-				newIngredient.getCharVolatility() * newIngredient.giveInLowestUnit()  )
-				/ (existingIngredient.giveInLowestUnit() + newIngredient.giveInLowestUnit()));
-				
+		return getKettle().ingredientResult();
+		
 	}
 
 	/**
 	 * Add an ingredient new to this storage
-	 * @param	container
+	 * @param	ingredient
 	 * 			The container we're adding
 	 * @effect	The result of heating/cooling the container's ingredient  to standard temperature
 	 * 			is at the correct index in the laboratory storage
@@ -431,6 +515,8 @@ public class Laboratory {
 	 *  		The ingredient to be checked
 	 * @return	True if and only if there is no alchemic ingredient with a type that has the same name
 	 * 			| result == (find(newIngredient.getName()) != -1)
+	 * 
+	 * @note	Why do we call it containsIngredientName and not containsIngredient? Because we're searching on name, and not type!
 	 */
 	public boolean containsIngredientName(AlchemicIngredient newIngredient) {
 		return find(newIngredient.getName()) != -1;
@@ -507,7 +593,7 @@ public class Laboratory {
 			middle = (left+right)/2;
 		}
 		// right = left - 1 and floor(right + left / 2) == middle
-		assert(right == middle);
+		assert(right == middle || right == -1 && middle == 0);
 		return middle;
 	}
 	

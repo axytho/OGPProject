@@ -171,11 +171,20 @@ public class AlchemicIngredient {
 	 ***************************************************************/
 	
 	/**
-	 * Return the simple name of this Alchemic Ingredient
+	 * Return the name of this Alchemic Ingredient: 
 	 * 
-	 * 
+	 * @return	a special name if available, else the mixed name if mixed, else the name of the type
+	 * 			| if (getSpecialName() != null)
+	 * 			| 		result == getSpecialName()
+	 * 			| else if (getType().getName() == null)
+	 * 			|		result == getMixedName()
+	 * 			| else
+	 * 			|		result == getType().getName()
 	 */
 	public String getName() {
+		if (getSpecialName() != null) {
+			return getSpecialName();
+		}
 		if (getType().getName() == null) {
 			return getMixedName();
 		}
@@ -314,115 +323,7 @@ public class AlchemicIngredient {
 		return getTotalNameWithoutSpecial();
 	}
 	
-	//LEGACY CODE:
-	// TODO: DELETE
-	
-	/**
-	 * An array of adjectives which are considered special
-	 */
-	
-	private static final String[] specialAdjectives = {"Heated", "Cooled"};
-	
-	/**
-	 * A list containing the special adjectives for easy access
-	 */
-	private static final List<String> specialAdjective = Arrays.asList(specialAdjectives);
-	
-	// "Heated Red Eye Special (Heated Coke mixed with Beer, Cooled Water , Vodka, Martini, Cider and Tomato Juice)"
-	// isValidSimpleName("Red Eye Special")
-	// isValidTotalName("Red Eye Special (Heated Coke mixed with Beer, Water, Vodka, Martini, Cider and Tomato Juice)")
-	// isValidSimpleName("Coke"), isValidSimpleName("Beer"), etc...
-	// + check if valid way of constructing special name (comma's, and, mixed with at the right places)
-	//
-	
-	/**
-	 * 
-	 * @param	name
-	 * 			The total name
-	 * @return	Returns true if there is only one opening bracket, if it ends with a closing bracket
-	 * 			if the special name is a valid combined name and the simple mixed name is valid
-	 * 			| true if (Arrays.asList(name.split("\\(", 2)).size() == 2 && name.endsWith(")") )
-	 * 			| && isValidMixedName(Arrays.asList(name.split("\\(", 2)).get(0).trim())
-	 * 			| && isValidMixedName(Arrays.asList(name.split("\\(", 2)).get(1).substring(0, Arrays.asList(name.split("(", 2)).get(1).length() - 1))))
-	 */
-	public static boolean isValidTotalName(String name) {
-		List<String> splitList = Arrays.asList(name.split("\\(", 2));
-		int length= splitList.get(1).length();
-		return splitList.size() == 2 && name.endsWith(")") && isValidMixedName(splitList.get(0).trim())
-				&& isValidMixedName(splitList.get(1).substring(0, length - 1));
-	}
-	
-	/**
-	 * Check if the simple mixed name is valid
-	 * 
-	 * @param	name
-	 * 			The mixed name
-	 * @return	True if there's a valid name before and after the "mixed with", after each comma and before and after the "and"
-	 * 			true if
-	 * 			isValidCombinedName(name)
-	 * 			||
-	 * 			for (each combinedName in Arrays.asList(name.split(","))) 
-	 * 				isValidCombinedName(combinedName.trim())
-	 * 					&& indexOf(combinedName) != 0 && indexOf(combinedName) != Arrays.asList(name.split(",")).length() - 1
-	 * 				|| (Arrays.asList(combinedName.split("mixed with")).size() == 2 
-	 * 						&& isValidCombinedName(Arrays.asList(combinedName.split("mixed with")).get(0).trim())
-	 * 						&& isValidCombinedName(Arrays.asList(combinedName.split("mixed with")).get(1).trim())  
-	 * 						&& indexOf(combinedName) == 0    )
-	 * 				|| (Arrays.asList(combinedName.split("and")).size() == 2 
-	 * 						&& isValidCombinedName(Arrays.asList(combinedName.split("and")).get(0).trim())
-	 * 						&& isValidCombinedName(Arrays.asList(combinedName.split("and")).get(1).trim())  
-	 * 						&& indexOf(combinedName) == Arrays.asList(name.split(",")).size() - 1    )
-	 * 			
-	 * 
-	 */
-	public static boolean isValidMixedName(String name) {
-		if (isValidCombinedName(name)) {
-			return true;
-		}
-		
-		List<String> splitList = Arrays.asList(name.split(","));
-		int count = 0;
-		for (String combinedName : splitList) {
-			List<String> mixList = Arrays.asList(combinedName.split("mixed with"));
-			List<String> andList = Arrays.asList(combinedName.split("and"));	
-			if (!(isValidCombinedName(combinedName.trim()) && count != 0 && count !=  splitList.size() - 1)
-					&& !((mixList.size() == 2) && isValidCombinedName(mixList.get(0).trim()) && isValidCombinedName(mixList.get(1).trim())
-							&& count == 0 )
-					&& !((andList.size() == 2) && isValidCombinedName(andList.get(0).trim()) && isValidCombinedName(andList.get(1).trim())
-							&& count == splitList.size() - 1 )
-					) {
-				return false;
-			}		
-			count += 1;
-		}
-		return true;
-		
-	}
-	
-	// "with Coke" invalid
-	// ()
-	// "Heated Coke" valid
-	// 
-	
-	/**
-	 * Splits possible combined name in adjective and simple name and check whether both are valid
-	 * 
-	 * @param	name
-	 * 			The name to be split
-	 * @return	True if the combined name is either just a simple name, or if the first part of the name is a correct adjective
-	 * 			and the second part is a simple name and there is more than one part (to prevent index errors)
-	 * 			| True if
-	 * 			| 
-	 * 			| IngredientType.isValidSimpleName(name) || ( Arrays.asList(name.split(" ", 2)) != 1 && specialAdjective.contains(Arrays.asList(name.split(" ", 2)).get(0)) 
-	 * 			| && IngredientType.isValidName(Arrays.asList(name.split(" ", 2)).get(1)) )
-	 */		
-	public static boolean isValidCombinedName(String name) {
-		List<String> splitList = Arrays.asList(name.split(" ", 2));
-		return IngredientType.isValidSimpleName(name) || (splitList.size() > 1 && specialAdjective.contains(splitList.get(0)) 
-				&& IngredientType.isValidSimpleName(splitList.get(1)) );
-	}
-	
-	// END LEGACY CODE
+
 	
 	/***************************************************************
 	 * QUANTITY
@@ -735,7 +636,6 @@ public class AlchemicIngredient {
 		}
 		return sum;
 	}
-	//TODO: implement a nice way to represent quantity
 	
 	/**
 	 * Convert to spoons
@@ -744,7 +644,7 @@ public class AlchemicIngredient {
 	 * 			| giveInLowestUnit() / getConversionList()[1]
  	 */
 	public double giveInSpoons() {
-		return giveInLowestUnit() / getConversionList().get(1).getCVal();
+		return (double) giveInLowestUnit() / (double) getConversionList().get(1).getCVal();
 	}
 	
 	/**
@@ -754,7 +654,7 @@ public class AlchemicIngredient {
 	 * 			| giveInLowestUnit() / factorialList().get(factorialList().size() - 1)
  	 */
 	public double giveInStoreRooms() {
-		return giveInLowestUnit() / factorialList().get(factorialList().size() - 1);
+		return (double) giveInLowestUnit() / (double) factorialList().get(factorialList().size() - 1);
 	}	
 	
 	
@@ -1220,35 +1120,18 @@ public class AlchemicIngredient {
 	 * Return the effective volatility
 	 * 
 	 * 
-	 * 
-	 * 
-	 * TODO: change
-	 * @return	A constant or increasing volatility the higher this temperature is above its standard temperature
-	 * 			and a constant or decreasing volatility the lower it is under its standard temperature
-	 * 			| if this.getHotness > getType().getStandardTemperature()[1]
-	 * 			| 		result >=
-	 * 			| result if this.getHotness < getType().getStandardTemperature()[1]
-	 * 			
-	 * @note	getStandardTemperature()[1] > 0
-	 * 
-	 * 
-	 * 
-	 *  // TODO: DELETE
-//	 * @return	If this Ingredient is hotter than its standard temperature or equalt to its standard temperature, its volatility is given 
-//	 *			by its characteristic volatility multiplied by a 100 divided by 10 multiplied with its standard hotness plus
-//	 *			the amount it is heated above its standard hotness divided by its standard hotness multiplied with its characteristic volatility times 300
-//	 *			else multiply the volatility of the standard temperature with characteristic volatility for every 100% decrease in temperature 			
-//	 * 			| if (getHotness() > getType().getStandardTemperature()[1]) 
-//	 *			| 	result ==   standardVol + 300 * (getHotness() - getType().getStandardTemperature()[1]) / getType().getStandardTemperature()[1] 
-//	 *			|				* getCharVolatility();
-//	 *			| else if (getHotness() < getType().getStandardTemperature()[1])
-//	 *			|	result ==   standardVol * Math.pow(getCharVolatility(), (getType().getStandardTemperature()[1] - (getHotness() - getColdness())) 
-//	 *			|				/ getType().getStandardTemperature()[1]);		
-//	 *			| else 
-//	 *			|	result == standardVol;
-	 * 
-	 * 
-	 * 
+	 * @return	If this Ingredient is hotter than its standard temperature or equal to its standard temperature, its volatility is given 
+	 *			by its characteristic volatility multiplied by a 100 divided by 10 multiplied with its standard hotness plus
+	 *			the amount it is heated above its standard hotness divided by its standard hotness multiplied with its characteristic volatility times 300
+	 *			else multiply the volatility of the standard temperature with characteristic volatility for every 100% decrease in temperature 			
+	 * 			| if (getHotness() > getType().getStandardTemperature()[1]) 
+	 *			| 	result ==   getStandardVolatility() + 300 * (getHotness() - getType().getStandardTemperature()[1]) / getType().getStandardTemperature()[1] 
+	 *			|				* getCharVolatility();
+	 *			| else if (getHotness() < getType().getStandardTemperature()[1])
+	 *			|	result ==   getStandardVolatility() * Math.pow(getCharVolatility(), (getType().getStandardTemperature()[1] - (getHotness() - getColdness())) 
+	 *			|				/ getType().getStandardTemperature()[1]);		
+	 *			| else 
+	 *			|	result == getStandardVolatility();
 	 */
 	
 	public double getVolatility() {

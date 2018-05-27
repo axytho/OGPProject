@@ -131,22 +131,37 @@ public abstract class Device {
 		if (!isValidNumberOfItems(getIngredients().size() +1)) {
 			pop().terminate();
 		} 
-		deviceStorage.push(container.getContents());	
+		push(container.getContents());	
 		container.empty();
 	}
+	
+
 	
 	/**
 	 * Pop the last ingredient added from the device
 	 * 
 	 * @effect	Pop the last Alchemic Ingredient from the stack
 	 * 			| deviceStorage.pop()
-	 * 
+	 * @return	The last alchemic ingredient
+	 * 			| result == deviceStorage.pop()
 	 * @throws	EmptyStackException
 	 * 			The stack is empty
 	 * 			| getIngredients().isEmpty() == true
 	 */
 	protected AlchemicIngredient pop() throws EmptyStackException {
 		return deviceStorage.pop();
+	}
+	
+	/**
+	 * Push an ingredient onto the stack
+	 * 
+	 * @param	ingredient
+	 * 			The ingredient we're adding to the stack
+	 * @effect	Push an ingredient onto the stack
+	 * 			deviceStorage.push(ingredient)
+	 */
+	protected void push(AlchemicIngredient ingredient) {
+		deviceStorage.push(ingredient);
 	}
 	
 	/**
@@ -199,7 +214,7 @@ public abstract class Device {
 	 * @return	A container containing the Alchemic Ingredient created by the reaction
 	 * 			But the container cannot be the smallest or largest unit, so if it fits the smallest unit, the second largest type
 	 * 			(always a SPOON) will still be returned, else the largest available container will be filled with the alchemic ingredient
-	 * 			| stuffInsideContainer(getResult())
+	 * 			| result == stuffInsideContainer(getResult())
 	 * @throws	IllegalArgumentException
 	 * 			This device does not sit in a valid lab
 	 * 			| !isInCorrectLab()
@@ -215,6 +230,33 @@ public abstract class Device {
 		}
 		emptyResult();
 		return stuffInsideContainer(alchemResult);
+
+	}
+	
+	/**
+	 * Return the result of a reaction (and remove it from the device) as an alchemic ingredient
+	 * 
+	 * @post	The result is now empty
+	 * 			| getResult() == null
+	 * @return	A container containing the Alchemic Ingredient created by the reaction
+	 * 			But the container cannot be the smallest or largest unit, so if it fits the smallest unit, the second largest type
+	 * 			(always a SPOON) will still be returned, else the largest available container will be filled with the alchemic ingredient
+	 * 			| result == getResult()
+	 * @throws	IllegalArgumentException
+	 * 			This device does not sit in a valid lab
+	 * 			| !isInCorrectLab()
+	 */
+	
+	public AlchemicIngredient ingredientResult() throws EmptyResultException , IllegalArgumentException {
+		if (!isInCorrectLab()) {
+			throw new IllegalArgumentException("This device is not in the correct lab!");
+		}
+		AlchemicIngredient alchemResult = getResult();
+		if (alchemResult == null) {
+			throw new EmptyResultException();
+		}
+		emptyResult();
+		return alchemResult;
 
 	}
 
