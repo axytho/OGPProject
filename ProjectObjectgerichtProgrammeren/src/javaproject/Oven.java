@@ -25,6 +25,18 @@ public class Oven extends TempDevice {
 		super(lab);
 		changeTemperature(temp);
 	}
+	
+	/**
+	 * Check the bidirectional relationship
+	 * 
+	 * @return	True if this oven has a specified lab and the lab has this oven as its oven
+	 * 			| result == (getLab() != null && getLab().getOven() == this)
+	 * @note	Specification now closed
+	 */
+	@Override
+	public boolean isInCorrectLab() {
+		return (getLab() != null && getLab().getOven() == this);
+	}
 
 	/**
 	 * Heat the given item

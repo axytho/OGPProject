@@ -18,6 +18,18 @@ public class Transmogrifier extends Device {
 	}
 	
 	/**
+	 * Check the bidirectional relationship
+	 * 
+	 * @return	True if this transmogrifier has a specified lab and the lab has this transmogrifier as its transmogrifier
+	 * 			| result == (getLab() != null && getLab().getTransmogrifier() == this)
+	 * @note	Specification now closed
+	 */
+	@Override
+	public boolean isInCorrectLab() {
+		return (getLab() != null && getLab().getTransmogrifier() == this);
+	}
+	
+	/**
 	 * Toggle the state of the ingredient
 	 * 
 	 * @effect	We execute this device

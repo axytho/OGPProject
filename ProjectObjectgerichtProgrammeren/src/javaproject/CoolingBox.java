@@ -26,6 +26,18 @@ public class CoolingBox extends TempDevice {
 		super(lab);
 		changeTemperature(temp);
 	}
+	
+	/**
+	 * Check the bidirectional relationship
+	 * 
+	 * @return	True if this cooling box has a specified lab and the lab has this cooling box as its cooling box
+	 * 			| result == (getLab() != null && getLab().getFridge() == this)
+	 * @note	Specification now closed
+	 */
+	@Override
+	public boolean isInCorrectLab() {
+		return (getLab() != null && getLab().getFridge() == this);
+	}
 
 	/**
 	 * Cool the given item

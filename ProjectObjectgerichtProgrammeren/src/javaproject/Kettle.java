@@ -21,6 +21,18 @@ public class Kettle extends Device {
 	public Kettle(Laboratory lab) {
 		super(lab);
 	}
+	
+	/**
+	 * Check the bidirectional relationship
+	 * 
+	 * @return	True if this kettle has a specified lab and the lab has this kettle as its kettle
+	 * 			| result == (getLab() != null && getLab().getKettle() == this)
+	 * @note	Specification now closed
+	 */
+	@Override
+	public boolean isInCorrectLab() {
+		return (getLab() != null && getLab().getKettle() == this);
+	}
 
 	/**
 	 * Mix the ingredients in the kettle

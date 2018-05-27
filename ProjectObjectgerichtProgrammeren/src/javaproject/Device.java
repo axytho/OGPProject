@@ -13,8 +13,8 @@ import quantity.Quant;
  * 
  * @invar	This device must have a valid number of items
  * 			| isValidNumberOfItems(getIngredients().size())
- * @invar	Device must be in a laboratory
- * 			| isInLab()
+ * @invar	Device must be in a laboratory which contains the given device
+ * 			| isInCorrectLab()
  * @author	Jonas
  * 				
  */
@@ -43,6 +43,17 @@ public abstract class Device {
 	 */
 	public Laboratory getLab() {
 		return this.lab;
+	}
+	
+	/**
+	 * Check the bidirectional relationship
+	 * 
+	 * @return	False if this device does not have a specified lab
+	 * 			|if (getLab() == null):  result == false
+	 * @note	Specification deliberately left open
+	 */
+	public boolean isInCorrectLab() {
+		return (getLab() != null);
 	}
 	
 	/**
@@ -78,10 +89,17 @@ public abstract class Device {
 	 * 			| container.getContents() == null
 	 * @throws	IllegalArgumentException
 	 * 			The alchemic ingredient you're trying to add has already been terminated
+	 * 			| container.getContents().isTerminated()
+	 * @throws	IllegalArgumentException
+	 * 			This device does not sit in a valid lab
+	 * 			| !isInCorrectLab()
 	 */
 	
 	
 	public void add(IngredientContainer container) throws EmptyContainerException, IllegalArgumentException {
+		if (!isInCorrectLab()) {
+			throw new IllegalArgumentException("This device is not in the correct lab!");
+		}
 		if (container.getContents() == null) {
 			throw new EmptyContainerException();
 		}
@@ -160,9 +178,15 @@ public abstract class Device {
 	 * 			But the container cannot be the smallest or largest unit, so if it fits the smallest unit, the second largest type
 	 * 			(always a SPOON) will still be returned, else the largest available container will be filled with the alchemic ingredient
 	 * 			| stuffInsideContainer(getResult())
+	 * @throws	IllegalArgumentException
+	 * 			This device does not sit in a valid lab
+	 * 			| !isInCorrectLab()
 	 */
 	
-	public IngredientContainer result() throws EmptyResultException {
+	public IngredientContainer result() throws EmptyResultException , IllegalArgumentException {
+		if (!isInCorrectLab()) {
+			throw new IllegalArgumentException("This device is not in the correct lab!");
+		}
 		AlchemicIngredient alchemResult = getResult();
 		if (alchemResult == null) {
 			throw new EmptyResultException();
@@ -214,8 +238,14 @@ public abstract class Device {
 	 * 
 	 * @post	The result is now empty
 	 * 			| getResult() == null 
+	 * @throws	IllegalArgumentException
+	 * 			This device does not sit in a valid lab
+	 * 			| !isInCorrectLab()
 	 */
-	protected void emptyResult() {
+	protected void emptyResult() throws IllegalArgumentException {
+		if (!isInCorrectLab()) {
+			throw new IllegalArgumentException("This device is not in the correct lab!");
+		}
 		setResult(null);
 	}
 	
@@ -248,11 +278,14 @@ public abstract class Device {
 	 * @throws	EmptyStackException
 	 * 			The stack is empty
 	 * 			| isEmpty() == true
-	 * @throws	Illegal state exception
+	 * @throws	IllegalStateException
 	 * 			There are too many ingredients for this device
 	 * 			| !isValidNumberOfIngredients(getIngredients().size())
 	 */
 	public void execute() throws EmptyResultException, IllegalStateException {
+		if (!isInCorrectLab()) {
+			throw new IllegalArgumentException("This device is not in the correct lab!");
+		}
 		if (this.isEmpty()) {
 			throw new EmptyResultException();
 		}
