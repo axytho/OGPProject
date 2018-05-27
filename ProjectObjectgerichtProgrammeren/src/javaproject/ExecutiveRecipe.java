@@ -59,32 +59,32 @@ public class ExecutiveRecipe {
 	
 	public class HeatUp extends Instruction {
 		public void execute(Laboratory lab) throws IllegalStateException {
-			lab.getOven().changeTemperature(getLastCurrentElement().getContents().getTemperature());
-			lab.getOven().deltaTemperature(50);
-			lab.getOven().add(pop());
-			lab.getOven().execute();
-			push(lab.getOven().result());
+			lab.returnOven().changeTemperature(getLastCurrentElement().getContents().getTemperature());
+			lab.returnOven().deltaTemperature(50);
+			lab.returnOven().add(pop());
+			lab.returnOven().execute();
+			push(lab.returnOven().result());
 		}
 	}
 	
 	public class CoolDown extends Instruction {
 		
 		public void execute(Laboratory lab) throws IllegalStateException {
-			lab.getFridge().changeTemperature(getLastCurrentElement().getContents().getTemperature());
-			lab.getFridge().deltaTemperature(-50);
-			lab.getFridge().add(pop());
-			lab.getFridge().execute();
-			push(lab.getFridge().result());
+			lab.returnFridge().changeTemperature(getLastCurrentElement().getContents().getTemperature());
+			lab.returnFridge().deltaTemperature(-50);
+			lab.returnFridge().add(pop());
+			lab.returnFridge().execute();
+			push(lab.returnFridge().result());
 		}
 	}
 	
 	public class Mix extends Instruction {
 		public void execute(Laboratory lab) throws IllegalStateException {
 			for (int index = 0; index < getCurrentItems().size(); index++) {
-				lab.getKettle().add(pop());
+				lab.returnKettle().add(pop());
 			}
-			lab.getKettle().execute();
-			push(lab.getKettle().result());
+			lab.returnKettle().execute();
+			push(lab.returnKettle().result());
 		}
 	}
 	

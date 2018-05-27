@@ -6,7 +6,20 @@ import quantity.Quant;
 
 public class Recipe {
 	
-
+	/**
+	 * Initialize a recipe with a given instruction list and amount list
+	 * 
+	 * @param	amount
+	 * 			The amount list
+	 * @param	instruction
+	 * 			The instruction list
+	 * @post	The amount list is set to  a copy of the given amount and the instruction list is set to a copy of the given isntructions
+	 * 			| new.getAmounts().equals(amount) && new.getinstructions().equals(instruction)
+	 */
+	public Recipe(ArrayList<Amount> amount, ArrayList<Instruction> instruction) {
+		this.amounts = new ArrayList<Amount>(amount);
+		this.instructions = new ArrayList<Instruction>(instruction);
+	}
 	
 	public class Amount {
 		

@@ -165,7 +165,26 @@ public class Laboratory {
 	}
 	
 	/**
+	 * 
 	 * Check whether the given ingredient can be put at the given index (checker for ingredients which are not in list)
+	 * @param	ingredient
+	 * 			The ingredient we're checking
+	 * @param	index
+	 * 			The index at which we'd like to add our ingredient
+	 * @return	False if the storage already contains the given ingredient or if it would not be valid at the given index
+	 * 			| if (containsIngredientName(ingredient) || !isValidIngredientFor(ingredient, index)): result == false
+	 */
+	@Raw
+	public boolean isValidIngredientForAdding(AlchemicIngredient ingredient, int index) {
+		if (containsIngredientName(ingredient)) {
+			// ingredient should not be added at an index if it's already in the storage
+			return false;
+		}
+		return isValidIngredientFor(ingredient, index);  
+	}
+	
+	/**
+	 * Check whether the given ingredient is valid at the given index
 	 * 
 	 * @param	ingredient
 	 * 			The ingredient we're checking
@@ -175,15 +194,25 @@ public class Laboratory {
 	 * 			| if (!isValidNewIngredient(ingredient)): result == false
 	 * @return	False if the index is out of bounds
 	 * 			| if (index < 0 || index > getSize()): result == false
-	 * @return	False if the storage already contains the given ingredient
-	 * 			| if (containsIngredientName(ingredient)): result == false
 	 * @return	False if it is NOT true that 
 	 * 				either the ingredient equals zero or the ingredient at the index before the given index 
 	 * 					is ordered before this ingredient 
 	 * 				and either the index equals the size of the storage or the ingredient at this index
 	 * 					is ordered after the given index
+	 * 				and this laboratory does not contain this ingredient
+	 * 				else if it does contain this ingredient
+	 * 			False if it is NOT true that 
+	 * 				either the ingredient equals zero or the ingredient at the index before the given index 
+	 * 					is ordered before this ingredient 
+	 * 				and either the index equals the size of the storage minus one or the ingredient after the given ingredient
+	 * 					is ordered after the given given ingredient
+	 * 				and this laboratory does not contain this ingredient
+	 * 			| if (!containsIngredientName(ingredient)
+	 * 			|	(index == 0 || getIngredientAt(index-1).isOrderedBefore(ingredient))
+	 * 			|		&& (index == getSize() || getIngredientAt(index).isOrderedAfter(ingredient))
+	 * 			| else
 	 * 			| (index == 0 || getIngredientAt(index-1).isOrderedBefore(ingredient))			
-	 *			|	&& (index == getSize() || getIngredientAt(index).isOrderedAfter(ingredient))
+	 *			|	&& (index == getSize() - 1 || getIngredientAt(index + 1).isOrderedAfter(ingredient))
 	 */
 	@Raw
 	public boolean isValidIngredientFor(AlchemicIngredient ingredient, int index) {
@@ -194,8 +223,8 @@ public class Laboratory {
 			return false;
 		}
 		if (containsIngredientName(ingredient)) {
-			// ingredient should not be added at an index if it's already in the storage
-			return false;
+			return (index == 0 || getIngredientAt(index-1).isOrderedBefore(ingredient))			
+					&& (index == getSize() - 1 || getIngredientAt(index + 1).isOrderedAfter(ingredient));
 		}
 		return (index == 0 || getIngredientAt(index-1).isOrderedBefore(ingredient))			
 				&& (index == getSize() || getIngredientAt(index).isOrderedAfter(ingredient));  
@@ -295,11 +324,11 @@ public class Laboratory {
 	 * 			| getStorage().get(index) == ingredient
 	 * @throws	IllegalArgumentException
 	 * 			The ingredient cannot be added at the correct location
-	 * 			| !isValidIngredientFor(ingredient, index)
+	 * 			| !isValidIngredientForAdding(ingredient, index)
 	 */
 	@Basic @Model
 	private void addIngredientAt(int index, AlchemicIngredient ingredient) {
-		if (!isValidIngredientFor(ingredient, index)) {
+		if (!isValidIngredientForAdding(ingredient, index)) {
 			throw new IllegalArgumentException("This ingredient does not work at the given location");
 		}
 		storage.add(index, ingredient);
@@ -389,21 +418,21 @@ public class Laboratory {
 	 * @effect	The two ingredients are mixed after the kettle is cleared of previous ingredients and the old ingredient is removed from storage
 	 * 			(and the result is requested, clearing the result of the kettle)
 	 * 			|	removeIngredientAt(find(alchemicIngredient2.getContents().getName()))
-	 * 			|	getKettle().clear()
-	 * 			|	getKettle().add(ingredient1)
-	 * 			|	getKettle().add(ingredient2)
-	 * 			|	getKettle().execute()
-	 * 			|	getKettle().result() 
+	 * 			|	returnKettle().clear()
+	 * 			|	returnKettle().add(ingredient1)
+	 * 			|	returnKettle().add(ingredient2)
+	 * 			|	returnKettle().execute()
+	 * 			|	returnKettle().result() 
 	 * @return	The result of the kettle
-	 * 			| result == getKettle().result()
+	 * 			| result == returnKettle().result()
 	 */
 	private AlchemicIngredient mix(AlchemicIngredient alchemicIngredient, AlchemicIngredient alchemicIngredient2) {
 		removeIngredientAt(find(alchemicIngredient2.getName()));
-		getKettle().clear();
-		getKettle().add(alchemicIngredient);
-		getKettle().add(alchemicIngredient2);
-		getKettle().execute();
-		return getKettle().ingredientResult();
+		returnKettle().clear();
+		returnKettle().add(alchemicIngredient);
+		returnKettle().add(alchemicIngredient2);
+		returnKettle().execute();
+		return returnKettle().ingredientResult();
 		
 	}
 
@@ -429,15 +458,15 @@ public class Laboratory {
 	 * 			The container which contains the ingredient we're bringing to standard temperature
 	 * @effect			
 	 * 			| if (container.getContents().getTemperatureName() == AlchemicIngredient.Temperature.COOLED) 
-	 *			| getFridge().changeTemperature(container.getContents().getType().getStandardTemperature())
-	 *			| getFridge().add(container)
-	 *			| getFridge().execute()
-	 *		    | container =  getFridge().result()
+	 *			| returnFridge().changeTemperature(container.getContents().getType().getStandardTemperature())
+	 *			| returnFridge().add(container)
+	 *			| returnFridge().execute()
+	 *		    | container =  returnFridge().result()
 	 *			|  else if (container.getContents().getTemperatureName() == AlchemicIngredient.Temperature.HEATED)
-	 *			| getOven().changeTemperature(container.getContents().getType().getStandardTemperature())
-	 *			| getOven().add(container)
-	 *			| getOven().execute()
-	 *			| container = getOven().result()
+	 *			| returnOven().changeTemperature(container.getContents().getType().getStandardTemperature())
+	 *			| returnOven().add(container)
+	 *			| returnOven().execute()
+	 *			| container = returnOven().result()
 	 * @throws	IllegalStateException
 	 * 			This laboratory does not have a Oven (if heating) or a Cooling Box (if cooling)
 	 * 			| (AlchemicIngredient.compareTemperature(container.getContents().getTemperature(), 
@@ -448,15 +477,15 @@ public class Laboratory {
 	
 	private void bringToStandardTemp(IngredientContainer container) throws IllegalStateException {
 		if (container.getContents().getTemperatureState() == AlchemicIngredient.Temperature.COOLED) {
-			getFridge().changeTemperature(container.getContents().getType().getStandardTemperature());
-			getFridge().add(container);
-			getFridge().execute();
-			container =  getFridge().result();
+			returnFridge().changeTemperature(container.getContents().getType().getStandardTemperature());
+			returnFridge().add(container);
+			returnFridge().execute();
+			container =  returnFridge().result();
 		} else if (container.getContents().getTemperatureState() == AlchemicIngredient.Temperature.HEATED) {
-			getOven().changeTemperature(container.getContents().getType().getStandardTemperature());
-			getOven().add(container);
-			getOven().execute();
-			container = getOven().result();
+			returnOven().changeTemperature(container.getContents().getType().getStandardTemperature());
+			returnOven().add(container);
+			returnOven().execute();
+			container = returnOven().result();
 		}
 	}
 	
@@ -467,15 +496,15 @@ public class Laboratory {
 	 * 			The container which contains the ingredient we're bringing to standard temperature
 	 * @effect			
 	 * 			| if (container.getContents().getTemperatureName() == AlchemicIngredient.Temperature.COOLED) 
-	 *			| getFridge().changeTemperature(container.getContents().getType().getStandardTemperature())
-	 *			| getFridge().add(container)
-	 *			| getFridge().execute()
-	 *		    | container =  getFridge().result()
+	 *			| returnFridge().changeTemperature(container.getContents().getType().getStandardTemperature())
+	 *			| returnFridge().add(container)
+	 *			| returnFridge().execute()
+	 *		    | container =  returnFridge().result()
 	 *			|  else if (container.getContents().getTemperatureName() == AlchemicIngredient.Temperature.HEATED)
-	 *			| getOven().changeTemperature(container.getContents().getType().getStandardTemperature())
-	 *			| getOven().add(container)
-	 *			| getOven().execute()
-	 *			| container = getOven().result()
+	 *			| returnOven().changeTemperature(container.getContents().getType().getStandardTemperature())
+	 *			| returnOven().add(container)
+	 *			| returnOven().execute()
+	 *			| container = returnOven().result()
 	 * @throws	IllegalStateException
 	 * 			This laboratory does not have a Oven (if heating) or a Cooling Box (if cooling)
 	 * 			| (AlchemicIngredient.compareTemperature(container.getContents().getTemperature(), 
@@ -486,9 +515,9 @@ public class Laboratory {
 	
 	private void bringToStandardState(IngredientContainer container) throws IllegalStateException {
 		if (container.getContents().getState() != container.getContents().getType().getState()) {
-			getTransmogrifier().add(container);
-			getTransmogrifier().execute();
-			container =  getTransmogrifier().result();
+			returnTransmogrifier().add(container);
+			returnTransmogrifier().execute();
+			container =  returnTransmogrifier().result();
 		} 
 	}
 
@@ -725,12 +754,14 @@ public class Laboratory {
 	 * @throws	IllegalStateException
 	 * 			There is no oven in this lab
 	 * 			| !hasOven()
+	 * @return	The oven
+	 * 			| result == getOven()
 	 */
-	public Oven getOven() {
+	public Oven returnOven() {
 		if (!hasValidOven()) {
 			throw new IllegalStateException("This lab has no oven");
 		}
-		return this.LabOven;
+		return getOven();
 	}
 	/**
 	 * Return the cooling box of this lab
@@ -738,12 +769,14 @@ public class Laboratory {
 	 * @throws	IllegalStateException
 	 * 			There is no fridge in this lab
 	 * 			| !hasFridge()
+	 * @return	The fridge
+	 * 			| result == getFridge()
 	 */
-	public CoolingBox getFridge() {
+	public CoolingBox returnFridge() {
 		if (!hasValidFridge()) {
 			throw new IllegalStateException("This lab has no fridge");
 		}
-		return this.LabFridge;
+		return getFridge();
 	}
 	/**
 	 * Return the transmogrifier of this lab
@@ -751,12 +784,14 @@ public class Laboratory {
 	 * @throws	IllegalStateException
 	 * 			There is no transmogrifier in this lab
 	 * 			| !hasTransmogrifier()
+	 * @return	The Transmogrifier
+	 * 			| result == getTransmogrifier()
 	 */
-	public Transmogrifier getTransmogrifier() {
-		if (!hasTransmogrifier()) {
+	public Transmogrifier returnTransmogrifier() {
+		if (!hasValidTransmogrifier()) {
 			throw new IllegalStateException("This lab has no transmogrifier");
 		}
-		return this.LabTrans;
+		return getTransmogrifier();
 	}
 	
 	/**
@@ -765,13 +800,48 @@ public class Laboratory {
 	 * @throws	IllegalStateException
 	 * 			There is no kettle in this lab
 	 * 			| !hasKettle()
+	 * @return	The kettle
+	 * 			| result == getKettle()
 	 */
-	public Kettle getKettle() {
-		if (!hasKettle()) {
+	public Kettle returnKettle() {
+		if (!hasValidKettle()) {
 			throw new IllegalStateException("This lab has no kettle");
 		}
+		return getKettle();
+	}
+	
+	/**
+	 * Return the oven
+	 */
+	@Raw
+	public Oven getOven() {
+		return this.LabOven;
+	}
+	
+	/**
+	 * Return the cooling box
+	 */
+	@Raw
+	public CoolingBox getFridge() {
+		return this.LabFridge;
+	}
+	
+	/**
+	 * Return the kettle
+	 */
+	@Raw
+	public Kettle getKettle() {
 		return this.LabKettle;
 	}
+	
+	/**
+	 * Return the transmogrifier
+	 */
+	@Raw
+	public Transmogrifier getTransmogrifier() {
+		return this.LabTrans;
+	}
+	
 	
 	/**
 	 * Set the oven in this lab
@@ -779,7 +849,7 @@ public class Laboratory {
 	 * @param	oven
 	 * 			The oven which we put in our lab
 	 * @post	The lab oven is set to the given oven
-	 * 			| new.getOven() == oven
+	 * 			| new.returnOven() == oven
 	 */
 	@Model
 	protected void setOven(Oven oven) {
@@ -792,7 +862,7 @@ public class Laboratory {
 	 * @param	box
 	 * 			The box which we put in our lab
 	 * @post	The lab cooling box is set to the given box
-	 * 			| new.getFridge() == box
+	 * 			| new.returnFridge() == box
 	 */
 	@Model
 	protected void setFridge(CoolingBox box) {
@@ -804,7 +874,7 @@ public class Laboratory {
 	 * @param	kettle
 	 * 			The kettle which we put in our lab
 	 * @post	The lab kettle is set to the given kettle
-	 * 			| new.getKettle() == kettle
+	 * 			| new.returnKettle() == kettle
 	 */
 	@Model
 	protected void setKettle(Kettle kettle) {
@@ -817,7 +887,7 @@ public class Laboratory {
 	 * @param	transmogrifier
 	 * 			The transmogrifier which we put in our lab
 	 * @post	The lab transmogrifier is set to the given transmogrifier
-	 * 			| new.getTransmogrifier() == transmogrifier
+	 * 			| new.returnTransmogrifier() == transmogrifier
 	 */
 	@Model
 	protected void setTransmogrifier(Transmogrifier transmogrifier) {
@@ -828,7 +898,7 @@ public class Laboratory {
 	 * Check whether this device has a valid oven
 	 * 
 	 * @return	This lab has an oven and that oven has this lab as its lab
-	 * 			| hasOven && getOven().isInCorrectLab()
+	 * 			| hasOven && returnOven().isInCorrectLab()
 	 */
 	public boolean hasValidOven() {
 		return hasOven() && getOven().isInCorrectLab();
@@ -838,7 +908,7 @@ public class Laboratory {
 	 * Check whether this device has a valid Cooling box
 	 * 
 	 * @return	This lab has a fridge and that fridge has this lab as its lab
-	 * 			| hasFridge && getFridge().isInCorrectLab()
+	 * 			| hasFridge && returnFridge().isInCorrectLab()
 	 */
 	public boolean hasValidFridge() {
 		return hasFridge() && getFridge().isInCorrectLab();
@@ -848,7 +918,7 @@ public class Laboratory {
 	 * Check whether this device has a valid Kettle
 	 * 
 	 * @return	This lab has an Kettle and that Kettle has this lab as its lab
-	 * 			| hasKettle && getKettle().isInCorrectLab()
+	 * 			| hasKettle && returnKettle().isInCorrectLab()
 	 */
 	public boolean hasValidKettle() {
 		return hasKettle() && getKettle().isInCorrectLab();
@@ -858,7 +928,7 @@ public class Laboratory {
 	 * Check whether this device has a valid Transmogrifier
 	 * 
 	 * @return	This lab has an Transmogrifier and that Transmogrifier has this lab as its lab
-	 * 			| hasTransmogrifier && getTransmogrifier().isInCorrectLab()
+	 * 			| hasTransmogrifier && returnTransmogrifier().isInCorrectLab()
 	 */
 	public boolean hasValidTransmogrifier() {
 		return hasTransmogrifier() && getTransmogrifier().isInCorrectLab();

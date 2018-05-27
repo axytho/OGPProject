@@ -155,4 +155,16 @@ public class LabTest {
 		smallLab.add(RedLocker6);
 	}
 	
+	@Test
+	public void get_quantityDoublingPropperItems() {
+		smallLab.add(RedLocker);
+		smallLab.add(RedLocker2);
+		smallLab.add(RedLocker3);
+		smallLab.add(RedLocker4);
+		smallLab.add(RedLocker5);
+		assertTrue(smallLab.hasProperIngredients());
+	}
+	
+	
+	
 }

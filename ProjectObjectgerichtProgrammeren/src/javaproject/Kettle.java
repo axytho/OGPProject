@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import be.kuleuven.cs.som.annotate.Model;
 import javaproject.exception.EmptyContainerException;
 import quantity.*;
 
@@ -69,7 +70,7 @@ public class Kettle extends Device {
 	 * @post	The characteristic volatility is set to the correct characteristic volatility
 	 * 			| getResult().getCharVolatility() == findCharacteristicVolatility()
 	 * @post	The temperature is set to the correct temperature
-	 * 			| getResult().getTemperature() == findTemperature()
+	 * 			| getResult().getTemperature() == findTemperature(getResult())
 	 * @effect	We execute this device
 	 * 			| super.execute()
 	 * @effect	We terminate all ingredients
@@ -81,7 +82,7 @@ public class Kettle extends Device {
 		IngredientType type = getType();
 		AlchemicIngredient ingredient = new AlchemicIngredient(type, findQuantity());
 		ingredient.setCharacteristicVolatility(findCharacteristicVolatility());
-		ingredient.changeTempTo(findTemperature());
+		ingredient.changeTempTo(findTemperature(ingredient));
 		addMixList(ingredient);
 		setResult(ingredient);
 		terminateAll();
@@ -94,6 +95,7 @@ public class Kettle extends Device {
 	 * 			| for each ingredient in getIngredients():
 	 * 			|		ingredient.isTerminated() == true
 	 */
+	@Model
 	private void terminateAll() {
 		for (AlchemicIngredient ingredient : getIngredients()) {
 			ingredient.terminate();
@@ -111,6 +113,7 @@ public class Kettle extends Device {
 	 * 			|		result == new IngredientType(null, findState(), findStandardTemperature(), findTheoreticalVolatility())
 	 * 
 	 */
+	@Model
 	private IngredientType getType() {
 		IngredientType firstType = getIngredients().get(0).getType();
 		for (AlchemicIngredient ingredient : getIngredients()) {
@@ -196,6 +199,7 @@ public class Kettle extends Device {
 	 * 			but it still takes the state they both share
 	 * 
 	 */
+	@Model
 	private State findState() {
 		AlchemicIngredient minimum = getIngredients().get(0);
 		double minimumDifference = Math.abs(AlchemicIngredient.differenceTemperature(minimum.getType().getStandardTemperature(), new long[] {0,20}));
@@ -225,6 +229,7 @@ public class Kettle extends Device {
 	 *  		|	)
 	 *  		| 	AlchemicIngredient.compareTemperature(minimumIngredient.getType().getStandardTemperature(), result.getType().getStandardTemperature()) > 0
 	 */
+	@Model
 	private long[] findStandardTemperature() {
 		AlchemicIngredient minimum = getIngredients().get(0);
 		long minimumDifference = Math.abs(AlchemicIngredient.differenceTemperature(minimum.getType().getStandardTemperature(), new long[] {0,20}));
@@ -250,16 +255,14 @@ public class Kettle extends Device {
 	 * 
 	 * @return	The weighted mean of the temperature over the spoons
 	 * 			| AlchemicIngredient.temperatureToArray(sum(for ingredient in getIngredients(): ingredient.giveInSpoons() * (ingredient.getHotness()-ingredient.getColdness()))
-	 * 			|		/ ( findQuantity().get(0) / 8 + findQuantity().get(1)))
+	 * 			|		/ ( result.giveInSpoons()) )
 	 */
-	public long[] findTemperature() {
-		ArrayList<Integer> quantity = findQuantity();
-		double totalSpoons = quantity.get(0) / 8 + quantity.get(1);
+	public long[] findTemperature(AlchemicIngredient result) {
 		double sum = 0;
 		for (AlchemicIngredient ingredient : getIngredients()) {
 			sum += ingredient.giveInSpoons() * (ingredient.getHotness()-ingredient.getColdness());
 		}
-		long temperature =  (long) (sum/totalSpoons);
+		long temperature =   ((long) sum/ (long) result.giveInSpoons());
 		return AlchemicIngredient.temperatureToArray(temperature);		
 	}
 	
@@ -358,6 +361,7 @@ public class Kettle extends Device {
 	 * 			|				) / 6
 	 * 					
 	 */
+	@Model
 	private ArrayList<Integer> findQuantity() {
 		ArrayList<Integer> resultList = new ArrayList<Integer>(Collections.nCopies(findState().getQuantities().size(), 0));
 		int liquidVolume = 0;
@@ -403,9 +407,8 @@ public class Kettle extends Device {
 	 * 			This device does not sit in a valid lab
 	 * 			| !isInCorrectLab()
 	 */
-	
-	
-	public void add(AlchemicIngredient ingredient) throws EmptyContainerException, IllegalArgumentException {
+	@Model
+	protected void add(AlchemicIngredient ingredient) throws EmptyContainerException, IllegalArgumentException {
 		if (!isInCorrectLab()) {
 			throw new IllegalArgumentException("This device is not in the correct lab!");
 		}
