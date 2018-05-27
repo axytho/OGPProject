@@ -8,14 +8,18 @@ import javaproject.exception.*;
 
 public abstract class TempDevice extends Device {
 	
+	
+	
 	/**
-	 * Initialize this temperature device
+	 * Initialize a new temperature device which stands in a given laboratory
 	 * 
-	 * @effect	A device is initialized
-	 * 			| super()
+	 * @param	lab
+	 * 			The laboratory in which our temperature device sits
+	 * @effect	We initialize a new device which sits in a given laboratory
+	 * 			| super(lab)
 	 */
-	public TempDevice() {
-		
+	public TempDevice(Laboratory lab) {
+		super(lab);
 	}
 	
 	/**
@@ -87,6 +91,18 @@ public abstract class TempDevice extends Device {
 			throw new IllegalArgumentException("Not a valid temperature");
 		}
 		setTemperature(temperature);
+	}
+	
+	/**
+	 * Increase or decrease temperature of the temp device with the given amount
+	 * 
+	 * @param	temperature
+	 * 			The temperature with which we're increasing or decreasing the temperature
+	 * @effect	Change the temperature by the given amount
+	 * 			| changeTemperature(AlchemicIngredient.temperatureToArray(getTemperature()[1] - getTemperature()[0] + temperature))
+	 */
+	public void deltaTemperature(int temperature) {
+		changeTemperature(AlchemicIngredient.temperatureToArray(getTemperature()[1] - getTemperature()[0] + temperature));
 	}
 
 	

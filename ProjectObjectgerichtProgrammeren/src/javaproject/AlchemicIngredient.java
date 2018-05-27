@@ -268,9 +268,15 @@ public class AlchemicIngredient {
 	 * 			| result == createMixList().get(0).concat(" mixed with ").concat(createMixList().get(1))
 	 * 			|				+ sum(for I in 1..stringList.size() - 1: ", " + createMixList().get(I))
 	 * 			|			+ " and " + createMixList().get(createMixList().size() - 1)
+	 * @throws	IllegalArgumentException
+	 * 			The mixlist is empty
+	 * 			| createMixList().isEmpty()
  	 */
 	public String getMixedName() {
 		ArrayList<String> stringList = createMixList();
+		if (stringList.isEmpty()) {
+			throw new IllegalArgumentException("No mixed ingredients in this alchemic ingredient");
+		}
 		if (stringList.size() == 1) {
 			return stringList.get(0);
 		}
@@ -292,7 +298,7 @@ public class AlchemicIngredient {
 	 * 
 	 */
 	public String getTotalNameWithoutSpecial() {
-		return getVolatilityName() + getTemperatureName() + " " + getMixedName();
+		return getVolatilityState().getState() + " " + getTemperatureState().getState() + " " + getMixedName();
 	}
 	
 	/**
@@ -680,18 +686,21 @@ public class AlchemicIngredient {
 	 * 
 	 * @post	This alchemic ingredient is now equal to the unit
 	 * 			| convertToLowestUnit(unit) == giveInLowestUnit()
-	 * 
-	 * @note	Can also be implemented using setQuantityTo() and convertToLowestUnit(Quant unit)
 	 */
 	public void can(Quant unit) {
 		if (!fits(unit)) {
-			for (int index = 0; index < getSize(); index++) {
-				setItemAt(index, 0);
-				if (index == getConversionList().indexOf(unit)) {
-					setItemAt(index, 1);
-				}
-			}
+			setQuantityTo(convertToLowestUnit(unit));
 		}
+	}
+	
+	/**
+	 * Return the second highest unit of this alchemic Ingredient
+	 * 
+	 * @return	The second highest unit of this alchemic Ingredient
+	 * 			| getState().getQuantities().get(getSize() - 2)
+	 */
+	public Quant getHighestContainerQuantity() {
+		return getState().getQuantities().get(getSize() - 2);
 	}
 	
 	/**
@@ -728,6 +737,7 @@ public class AlchemicIngredient {
 		}
 		return sum;
 	}
+	//TODO: implement a nice way to represent quantity
 	
 	/**
 	 * Convert to spoons
@@ -740,20 +750,23 @@ public class AlchemicIngredient {
 	}
 	
 	/**
-	 * Convert to storerooms
+	 * Convert to storerooms as a double
 	 * 
-	 * @return	the quantity in spoons
+	 * @return	the quantity in storerooms
 	 * 			| giveInLowestUnit() / factorialList().get(factorialList().size() - 1)
  	 */
 	public double giveInStoreRooms() {
 		return giveInLowestUnit() / factorialList().get(factorialList().size() - 1);
 	}	
 	
+	
+	
+	
 	/**
 	 * Find the transmogrified quantity of the given ingredient
 	 * 
-	 * @result	An arrayList which contains in the first element the amount of ingredient in spoons multiplied with the amount
-	 * 			the new amount makes up in the new state and round down to make an integer
+	 * @return	An arrayList which contains in the first element the amount of ingredient in spoons multiplied with the amount
+	 * 			the new amount makes up in the new state and round down to make an integer representing the lowest unit
 	 * 			| if (i == 0) {
 	 * 			|	result.get(i) == (int) (ingredient.giveInSpoons() * state.getQuantities().get(1).getCVal())
 	 * 			| else
@@ -1042,7 +1055,7 @@ public class AlchemicIngredient {
 	
 	
 	/**
-	 * Get the name of this Alchemic Ingredient which reflects the temperature
+	 * Return the temperature state of this Alchemic Ingredient which reflects the temperature
 	 * 
 	 * @return	"Heated" if the temperature is higher than standard, "Cooled" if lower, "" if equal
 	 * 			| if (compareTemperature(getTemperature(),getType().getStandardTemperature()) == 1)
@@ -1053,16 +1066,41 @@ public class AlchemicIngredient {
 	 * 			| 		result == ""
 	 * 
 	 */			
-	public String getTemperatureName() {
+	public Temperature getTemperatureState() {
 		if (compareTemperature(getTemperature(),getType().getStandardTemperature()) > 0) {
-			return "Heated";
+			return Temperature.HEATED;
 		} else if (compareTemperature(getTemperature(),getType().getStandardTemperature()) < 0) {
-			return "Cooled";
+			return Temperature.COOLED;
 		} else
 			assert (getHotness() == getType().getStandardTemperature()[1]);
 			assert (getColdness() == getType().getStandardTemperature()[0]);
-			return "";
+			return Temperature.NONE;
 	}
+	
+	/**
+	 * The temperature state of this ingredient
+	 */
+	public static enum Temperature {
+		HEATED ("Heated"), COOLED ("Cooled"), NONE ("");
+		
+		Temperature(String state) {
+			this.state = state;
+		}
+		
+		/**
+		 * The state of temperature
+		 */
+		private String state = "";
+		
+		/**
+		 * Return the state of this class temperature
+		 */
+		public String getState() {
+			return this.state;
+		}
+	}
+	
+
 	
 	
 	/**
@@ -1242,13 +1280,21 @@ public class AlchemicIngredient {
 	}
 	
 	/**
-	 * Return the name of this volatility
-	 * TODO: change!
+	 * Return the state of this volatility
+	 * 
+	 * 
 	 */
-	public String getVolatilityName() {
-		
-		
-		return "helloWorld";
+	public Volatility getVolatilityState() {
+		if 	(getStandardVolatility() > 1000) {
+			return Volatility.DANGER;
+		}
+		if (getVolatility() > 1000) {
+			return Volatility.VOLATILE;
+		}
+		if (getVolatility() < getStandardVolatility()/100 && getVolatility() < 100) {
+			return Volatility.INERT;
+		}
+		return Volatility.NONE;
 	}
 	
 	/**
@@ -1259,6 +1305,39 @@ public class AlchemicIngredient {
 	 */
 	public static boolean isValidCharVolatility(double volatility) {
 		return 0 <= volatility && volatility < 1;
+	}
+	
+	
+	
+	
+	/**
+	 * The volatility state of this ingredient
+	 */
+	public static enum Volatility {
+		DANGER ("Danger"), VOLATILE ("Volatile"), INERT ("Inert"), NONE ("");
+		
+		/**
+		 * Initialize the state of the volatility
+		 * 
+		 * @param	state
+		 * 			The name given to this volatility
+		 */
+		
+		Volatility(String state) {
+			this.state = state;
+		}
+		
+		/**
+		 * The state of volatility
+		 */
+		private String state = "";
+		
+		/**
+		 * Return the state of this class volatility
+		 */
+		public String getState() {
+			return this.state;
+		}
 	}
 	
 	
@@ -1291,11 +1370,30 @@ public class AlchemicIngredient {
 	}
 	
 	
+	/***************************************************************
+	 * Order
+	 ***************************************************************/
+	
+	/**
+	 * Check whether this ingredient is strictly ordered after the given ingredient
+	 * 
+	 * @return	True if this ingredient's name is lexographically greater than the given ingredient's name
+	 * 			| this.getName().compareTo(ingredient.getName()) > 0
+ 	 */
+	public boolean isOrderedAfter(AlchemicIngredient ingredient) {
+		return this.getName().compareTo(ingredient.getName()) > 0;
+	}
 	
 	
-	
-	
-	
+	/**
+	 * Check whether this ingredient is strictly ordered before the given ingredient
+	 * 
+	 * @return	True if this ingredient's name is lexographically greater than the given ingredient's name
+	 * 			| this.getName().compareTo(ingredient.getName()) < 0
+ 	 */
+	public boolean isOrderedBefore(AlchemicIngredient ingredient) {
+		return this.getName().compareTo(ingredient.getName()) < 0;
+	}
 	
 	
 

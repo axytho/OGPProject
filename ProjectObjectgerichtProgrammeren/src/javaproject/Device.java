@@ -9,10 +9,12 @@ import javaproject.exception.*;
 import quantity.Quant;
 
 /**
- * A device capable of performing operations on given Alchemic Ingredients
+ * A device capable of performing operations on given Alchemic Ingredients (defensive programming)
  * 
  * @invar	This device must have a valid number of items
  * 			| isValidNumberOfItems(getIngredients().size())
+ * @invar	Device must be in a laboratory
+ * 			| isInLab()
  * @author	Jonas
  * 				
  */
@@ -27,8 +29,37 @@ public abstract class Device {
 	 * @post	The result is null
 	 * 			| new.getResult() == null
 	 */
-	public Device() {
-		
+	public Device(Laboratory lab) {
+		this.lab = lab;
+	}
+	
+	/**
+	 * The lab in which this device is stationed
+	 */
+	private Laboratory lab = null;
+	
+	/**
+	 * Return the lab in which this device is stationed
+	 */
+	public Laboratory getLab() {
+		return this.lab;
+	}
+	
+	/**
+	 * Set the laboratory to the given laboratory
+	 * 
+	 * @param	lab
+	 * 			The lab in which this device sits
+	 * @post	The lab is set to the given lab
+	 * 			| new.getLab() == lab
+	 * @note	Does not verify the bi-directional relationship, but does check everything else about lab
+	 */
+	@Raw @Model
+	private void setLab(Laboratory lab) throws IllegalArgumentException{
+		if (!lab.hasProperIngredients()) {
+			throw new IllegalArgumentException("Invalid Lab");
+		}
+		this.lab = lab;
 	}
 	
 	/**
@@ -49,12 +80,13 @@ public abstract class Device {
 	 * 			The alchemic ingredient you're trying to add has already been terminated
 	 */
 	
+	
 	public void add(IngredientContainer container) throws EmptyContainerException, IllegalArgumentException {
 		if (container.getContents() == null) {
 			throw new EmptyContainerException();
 		}
 		if (container.getContents().isTerminated()) {
-			throw new IllegalArgumentException("Container is terminated!");
+			throw new IllegalArgumentException("Container's ingredient is terminated!");
 		}
 		if (!isValidNumberOfItems(getIngredients().size() +1)) {
 			pop().terminate();
@@ -126,40 +158,54 @@ public abstract class Device {
 	 * 			| getResult() == null
 	 * @return	A container containing the Alchemic Ingredient created by the reaction
 	 * 			But the container cannot be the smallest or largest unit, so if it fits the smallest unit, the second largest type
-	 * 			(always a SPOON) will still be returned, if it does not fit a barrel, the rest is thrown away and a filled barrel is returned
-	 * 			| for each unit in  getResult().getState().getQuantities().subList(1, result.getSize()-1)
-	 * 			|	if getResult().fits(unit) then result == new IngredientContainer("Result", unit, getResult())
-	 * 			| else
-	 * 			|	result.getName() == "Result"  && 
-	 * 			|	result.getCapacity() == alchemResult.getState().getQuantities().get(alchemResult.getSize()-2)&&
-	 * 			|	result.getContents().giveInLowestUnit() == result.getContents().convertToLowestUnit(
-				|			alchemResult.getState().getQuantities().get(alchemResult.getSize()-2) )
+	 * 			(always a SPOON) will still be returned, else the largest available container will be filled with the alchemic ingredient
+	 * 			| stuffInsideContainer(getResult())
 	 */
 	
-	public IngredientContainer resultAfterReaction() throws EmptyResultException {
+	public IngredientContainer result() throws EmptyResultException {
 		AlchemicIngredient alchemResult = getResult();
 		if (alchemResult == null) {
 			throw new EmptyResultException();
 		}
 		emptyResult();
+		return stuffInsideContainer(alchemResult);
+
+	}
+
+	/**
+	 * 
+	 * @param	alchemResult
+	 * 			The alchemic ingredient we're trying to get into the largest possible container
+	 * @return	A container containing the Alchemic Ingredient created by the reaction
+	 * 			But the container cannot be the smallest or largest unit, so if it fits the smallest unit, the second largest type
+	 * 			(always a SPOON) will still be returned, else the largest available container will be filled with the alchemic ingredien
+	 * 			| for each unit in  alchemResult.getState().getQuantities().subList(1, alchemResult.getSize()-1)
+	 * 			|	if alchemResult.fits(unit) then result == new IngredientContainer("Result", unit, alchemResult)
+	 * 			| else
+	 * 			|	result.getName() == "Result"  && 
+	 * 			|	result.getCapacity() == alchemResult.getState().getQuantities().get(alchemResult.getSize()-2)&&
+	 * 			|	result.getContents().giveInLowestUnit() == alchemResult.getContents().convertToLowestUnit(
+	 *			|			alchemResult.getHighestContainerQuantity() )
+	 */
+	public static IngredientContainer stuffInsideContainer(AlchemicIngredient alchemResult) {
 		for (Quant unit : alchemResult.getState().getQuantities().subList(1, alchemResult.getSize()-1)) {
 			if (alchemResult.fits(unit)) {
 				return new IngredientContainer("Result", unit, alchemResult);
 			}
 		}
-
-		Quant largestUnit = alchemResult.getState().getQuantities().get(alchemResult.getSize()-2);
+		Quant largestUnit = alchemResult.getHighestContainerQuantity();
 		alchemResult.can(largestUnit);
 		return new IngredientContainer("Result", largestUnit, alchemResult);
-
 	}
+	
+
 	
 	
 	/**
 	 * Return the result without deleting it
 	 */
 	@Raw @Basic
-	public AlchemicIngredient getResult() {
+	protected AlchemicIngredient getResult() {
 		return result;
 	}
 	
@@ -169,7 +215,7 @@ public abstract class Device {
 	 * @post	The result is now empty
 	 * 			| getResult() == null 
 	 */
-	public void emptyResult() {
+	protected void emptyResult() {
 		setResult(null);
 	}
 	

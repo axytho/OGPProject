@@ -6,6 +6,18 @@ public class Transmogrifier extends Device {
 
 	
 	/**
+	 * Initialize a new transmogrifier with a given temperature and a given lab
+	 * 
+	 * @param	lab
+	 * 			The laboratory in which our transmogrifier sits
+	 * @effect	We initialize a new device which sits in a given laboratory
+	 * 			| super(lab)
+	 */
+	public Transmogrifier(Laboratory lab) {
+		super(lab);
+	}
+	
+	/**
 	 * Toggle the state of the ingredient
 	 * 
 	 * @effect	We execute this device

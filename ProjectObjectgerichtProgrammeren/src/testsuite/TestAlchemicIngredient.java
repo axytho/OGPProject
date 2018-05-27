@@ -8,6 +8,7 @@ import java.util.Collections;
 import org.junit.*;
 
 import javaproject.*;
+import javaproject.AlchemicIngredient.Temperature;
 import quantity.*;
 
 public class TestAlchemicIngredient {
@@ -149,11 +150,11 @@ public class TestAlchemicIngredient {
 	
 	@Test
 	public void testTemperatureName() {
-		assertEquals(TodaysDD.getTemperatureName(), "");
+		assertEquals(TodaysDD.getTemperatureState(), Temperature.NONE);
 		TodaysDD.heat(50);
-		assertEquals(TodaysDD.getTemperatureName(), "Heated");
+		assertEquals(TodaysDD.getTemperatureState(), Temperature.HEATED);
 		TodaysDD.cool(60);
-		assertEquals(TodaysDD.getTemperatureName(), "Cooled");
+		assertEquals(TodaysDD.getTemperatureState(), Temperature.COOLED);
 	}
 	
 	@Test

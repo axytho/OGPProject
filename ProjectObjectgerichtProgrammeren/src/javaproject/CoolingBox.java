@@ -8,17 +8,22 @@ package javaproject;
  */
 
 public class CoolingBox extends TempDevice {
+
 	
 	/**
-	 * Initialize a new Cooling box with a given temperature
+	 * Initialize a new Cooling box with a given temperature and a given lab
 	 * 
+	 * @param	lab
+	 * 			The laboratory in which our cooling box sits
+	 * @param	temp
+	 * 			The temperature to which we set the cooling box
+	 * @effect	We initialize a new device which sits in a given laboratory
+	 * 			| super(lab)
 	 * @effect	The temperature of this box is changed to the given temperature
 	 * 			| changeTemperature(temp)
-	 * @effect	A temperature device is initialized
-	 * 			| super()
 	 */
-	public CoolingBox(long[] temp) {
-		super();
+	public CoolingBox(Laboratory lab, long[] temp) {
+		super(lab);
 		changeTemperature(temp);
 	}
 

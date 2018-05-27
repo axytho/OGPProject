@@ -28,6 +28,8 @@ public class DeviceTest {
 
 	static Device MyLittleCatOven, CatKettle, CatTrans;
 	
+	static Laboratory lab;
+	
 	@Before
 	public void setUpBeforeClassIngredients() {
 		Devilsdelight = new IngredientType("Devils Delight", State.Liquid, new long[] {0 , 66}, 0.99);
@@ -58,9 +60,10 @@ public class DeviceTest {
 		CyanBox = new IngredientContainer("Cyan Box", SQuant.BOX);
 		MagentaSack = new IngredientContainer("Magenta Sack", SQuant.SACK);
 		RedLocker = new IngredientContainer("Jonas' Locker", SQuant.CHEST);
-		CatTrans = new Transmogrifier();
-		MyLittleCatOven = new Oven(new long[] {0, 300});
-		CatKettle = new Kettle();		
+		lab = new Laboratory(3);
+		CatTrans = new Transmogrifier(lab);
+		MyLittleCatOven = new Oven(lab, new long[] {0, 300});
+		CatKettle = new Kettle(lab);		
 	}
 	
 	@Test(expected = EmptyResultException.class)
@@ -77,7 +80,7 @@ public class DeviceTest {
 	public void boilTheCat() {
 		MyLittleCatOven.add(BlueBottle);
 		MyLittleCatOven.execute();
-		RedBottle = MyLittleCatOven.resultAfterReaction();
+		RedBottle = MyLittleCatOven.result();
 		assertEquals(RedBottle.getCapacity(), LQuant.BOTTLE);
 		AlchemicIngredient Boilcat= RedBottle.getContents();
 		assertTrue(Boilcat.getHotness() > 298 && Boilcat.getHotness()< 302);
@@ -89,7 +92,7 @@ public class DeviceTest {
 		CatKettle.add(BlueBottle);
 		CatKettle.add(PurpleJug);
 		CatKettle.execute();
-		ResultBarrel = CatKettle.resultAfterReaction();
+		ResultBarrel = CatKettle.result();
 		assertEquals(ResultBarrel.getCapacity(), LQuant.BARREL);
 		AlchemicIngredient MixedCat = ResultBarrel.getContents();
 		assertEquals(MixedCat.getName(), "Cat mixed with Devils Delight");
@@ -110,7 +113,8 @@ public class DeviceTest {
 		CatTrans.add(PurpleJug);
 		CatTrans.add(BlueBottle);
 		CatTrans.execute();
-		assertEquals(CatTrans.getResult().getState(), State.Solid);
+		IngredientContainer result = CatTrans.result();
+		assertEquals(result.getContents().getState(), State.Solid);
 		
 		
 	}

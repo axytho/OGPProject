@@ -2,11 +2,26 @@ package javaproject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import quantity.*;
 
 public class Kettle extends Device {
 	
+	
+	/**
+	 * Initialize a new kettle which stands in a given laboratory
+	 * 
+	 * @param	lab
+	 * 			The laboratory in which our kettle sits
+	 * @effect	We initialize a new device which sits in a given laboratory
+	 * 			| super(lab)
+	 */
+	public Kettle(Laboratory lab) {
+		super(lab);
+	}
+
 	/**
 	 * Mix the ingredients in the kettle
 	 * 
@@ -54,17 +69,23 @@ public class Kettle extends Device {
 	}
 
 	/**
-	 * Add the mix of ingredient types to the ingredient
+	 * Add the mix of distinct ingredient types to the ingredient
 	 * 
 	 * @param	result
 	 * 			The result of our kettle
-	 * @post	The mix list contains every type of every ingredient in the kettle
-	 * 			| for each ingredient in getIngredients: result.getIngredientMixList().contains(ingredient.getType())
+	 * @post	The mix list contains every type of every ingredient in the kettle, but each only once
+	 * 			| for each ingredient in getIngredients:
+	 *			|	for each ingredientType in ingredient.getIngredientMixList():
+	 *			| 		result.getIngredientMixList().contains(ingredientType)
 	 */
 	public void addMixList(AlchemicIngredient result) {
+		Set<IngredientType> resultSet = new HashSet<IngredientType>();
 		for (AlchemicIngredient ingredient: getIngredients()) {
-			if (!result.getIngredientMixList().contains(ingredient.getType()))
-				result.addToMixList(ingredient.getType());
+			resultSet.addAll(ingredient.getIngredientMixList());
+			resultSet.add(ingredient.getType());
+		}
+		for (IngredientType ingredientType : resultSet) {
+			result.addToMixList(ingredientType);
 		}
 	}
 	
@@ -245,7 +266,7 @@ public class Kettle extends Device {
 	 * 
 	 * 
 	 * 
-	 * @result	if everything is liquid, result equals a list containing the uncarried amount of pinches of all the ingredients
+	 * @return	if everything is liquid, result equals a list containing the uncarried amount of pinches of all the ingredients
 	 * 			| if (for each ingredient in getIngredients()
 	 * 			|			ingredient.getState() == State.Liquid)
 	 * 			|   then result.get(0) = sum(for each ingredient in getIngredients(): ingredient.giveInLowestUnit())

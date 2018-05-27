@@ -10,15 +10,19 @@ package javaproject;
 public class Oven extends TempDevice {
 	
 	/**
-	 * Initialize a new Oven with a given temperature
+	 * Initialize a new oven with a given temperature and a given lab
 	 * 
+	 * @param	lab
+	 * 			The laboratory in which our oven sits
+	 * @param	temp
+	 * 			The temperature to which we set the oven
+	 * @effect	We initialize a new device which sits in a given laboratory
+	 * 			| super(lab)
 	 * @effect	The temperature of this box is changed to the given temperature
 	 * 			| changeTemperature(temp)
-	 * @effect	A temperature device is initialized
-	 * 			| super()
 	 */
-	public Oven(long[] temp) {
-		super();
+	public Oven(Laboratory lab, long[] temp) {
+		super(lab);
 		changeTemperature(temp);
 	}
 
