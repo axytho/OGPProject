@@ -76,6 +76,10 @@
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pq5yUGGSEeiv3YmXi3jc2Q"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_pq_R4GGSEeiv3YmXi3jc2Q" value="1"/>
       </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_x0WXIWG9Eeiv3YmXi3jc2Q" name="laboratory" type="_lAoYkGGzEeiv3YmXi3jc2Q" association="_x0TT0GG9Eeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_x0YzYGG9Eeiv3YmXi3jc2Q" value="1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_x0aBgGG9Eeiv3YmXi3jc2Q" value="1"/>
+      </ownedAttribute>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_ijGUEGGQEeiv3YmXi3jc2Q" name="TempDevice">
       <generalization xmi:type="uml:Generalization" xmi:id="_kWSTgGGREeiv3YmXi3jc2Q" general="_YnNSsGGQEeiv3YmXi3jc2Q"/>
@@ -96,6 +100,65 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_suLA8GGQEeiv3YmXi3jc2Q" name="Oven">
       <generalization xmi:type="uml:Generalization" xmi:id="_svO7cGGREeiv3YmXi3jc2Q" general="_ijGUEGGQEeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_I8UxkGG5Eeiv3YmXi3jc2Q" name="Amount">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_SLt5UGG5Eeiv3YmXi3jc2Q" name="quantity" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#int"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_Sd09AGG5Eeiv3YmXi3jc2Q" name="type" visibility="private" type="_Pr3wYGGFEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_TKvGUGG5Eeiv3YmXi3jc2Q" name="unit" visibility="private" type="_c44c4GGIEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_LbCdcWG-Eeiv3YmXi3jc2Q" name="recipe" type="_v17fcGG5Eeiv3YmXi3jc2Q" association="_LbAoQGG-Eeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_LbDEgGG-Eeiv3YmXi3jc2Q"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_LbDEgWG-Eeiv3YmXi3jc2Q" value="1"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_v17fcGG5Eeiv3YmXi3jc2Q" name="Recipe">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_ygpZQGG5Eeiv3YmXi3jc2Q" name="Instructions" visibility="private"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_yzn_oGG5Eeiv3YmXi3jc2Q" name="amounts" visibility="private" type="_I8UxkGG5Eeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_n-UQsGG-Eeiv3YmXi3jc2Q" name="executiverecipe" type="_etXmkGG6Eeiv3YmXi3jc2Q" association="_n-TCkGG-Eeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_n-U3wGG-Eeiv3YmXi3jc2Q"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_n-U3wWG-Eeiv3YmXi3jc2Q" value="1"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_etXmkGG6Eeiv3YmXi3jc2Q" name="ExecutiveRecipe">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_sBWvsGG7Eeiv3YmXi3jc2Q" name="recipe" visibility="private" type="_v17fcGG5Eeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_sYy_UGG7Eeiv3YmXi3jc2Q" name="factor" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#int"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_tAppgGG7Eeiv3YmXi3jc2Q" name="currrentItems" visibility="private" type="_2cGnMGGCEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_tSfncGG7Eeiv3YmXi3jc2Q" name="indexAmount" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#int"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_WryD0GG8Eeiv3YmXi3jc2Q" name="Instructions" isAbstract="true">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_NZ26kmG-Eeiv3YmXi3jc2Q" name="recipe" type="_v17fcGG5Eeiv3YmXi3jc2Q" association="_NZ1scGG-Eeiv3YmXi3jc2Q">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NZ3hoGG-Eeiv3YmXi3jc2Q"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NZ3hoWG-Eeiv3YmXi3jc2Q" value="1"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_idn6MGG8Eeiv3YmXi3jc2Q" name="HeatUp">
+      <generalization xmi:type="uml:Generalization" xmi:id="_fWgGUGG-Eeiv3YmXi3jc2Q" general="_WryD0GG8Eeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_iymrsGG8Eeiv3YmXi3jc2Q" name="CoolDown">
+      <generalization xmi:type="uml:Generalization" xmi:id="_g7twoGG-Eeiv3YmXi3jc2Q" general="_WryD0GG8Eeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_jCs9MGG8Eeiv3YmXi3jc2Q" name="Mix">
+      <generalization xmi:type="uml:Generalization" xmi:id="_jEAS0GG-Eeiv3YmXi3jc2Q" general="_WryD0GG8Eeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_jfME4GG8Eeiv3YmXi3jc2Q" name="Add">
+      <generalization xmi:type="uml:Generalization" xmi:id="_eswlwGG-Eeiv3YmXi3jc2Q" general="_WryD0GG8Eeiv3YmXi3jc2Q"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_lAoYkGGzEeiv3YmXi3jc2Q" name="Laboratory" visibility="public">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_sHXxwGGzEeiv3YmXi3jc2Q" name="Capacity" visibility="private">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#int"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_tDJdgGGzEeiv3YmXi3jc2Q" name="storage" visibility="private" type="_MfVnIGF-Eeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_teyQoGGzEeiv3YmXi3jc2Q" name="storageList" visibility="private" type="_MfVnIGF-Eeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_t5jhEGGzEeiv3YmXi3jc2Q" name="LabOven" visibility="private" type="_suLA8GGQEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_uNJLcGGzEeiv3YmXi3jc2Q" name="LabFridge" visibility="private" type="_r858EGGQEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_ujCi8GGzEeiv3YmXi3jc2Q" name="LabTrans" visibility="private" type="_msQh0GGQEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_wNKF8GG0Eeiv3YmXi3jc2Q" name="LabKettle" visibility="private" type="_l8c1gGGQEeiv3YmXi3jc2Q"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_x0aokGG9Eeiv3YmXi3jc2Q" name="device" type="_YnNSsGGQEeiv3YmXi3jc2Q" association="_x0TT0GG9Eeiv3YmXi3jc2Q"/>
     </packagedElement>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_FmfUcGGIEeiv3YmXi3jc2Q" name="quantity">
@@ -132,6 +195,29 @@
       <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_JO5zUWGNEeiv3YmXi3jc2Q" key="nature" value="UML_Nature"/>
     </eAnnotations>
     <ownedEnd xmi:type="uml:Property" xmi:id="_JO7BcmGNEeiv3YmXi3jc2Q" name="ingredientcontainer" type="_2cGnMGGCEeiv3YmXi3jc2Q" association="_JO4lMGGNEeiv3YmXi3jc2Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_x0TT0GG9Eeiv3YmXi3jc2Q" memberEnd="_x0WXIWG9Eeiv3YmXi3jc2Q _x0aokGG9Eeiv3YmXi3jc2Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_x0VwEGG9Eeiv3YmXi3jc2Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_x0WXIGG9Eeiv3YmXi3jc2Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_LbAoQGG-Eeiv3YmXi3jc2Q" memberEnd="_LbCdcWG-Eeiv3YmXi3jc2Q _LbDrkGG-Eeiv3YmXi3jc2Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_LbB2YGG-Eeiv3YmXi3jc2Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_LbCdcGG-Eeiv3YmXi3jc2Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_LbDrkGG-Eeiv3YmXi3jc2Q" name="amount" type="_I8UxkGG5Eeiv3YmXi3jc2Q" association="_LbAoQGG-Eeiv3YmXi3jc2Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_NZ1scGG-Eeiv3YmXi3jc2Q" memberEnd="_NZ26kmG-Eeiv3YmXi3jc2Q _NZ3homG-Eeiv3YmXi3jc2Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_NZ26kGG-Eeiv3YmXi3jc2Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_NZ26kWG-Eeiv3YmXi3jc2Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_NZ3homG-Eeiv3YmXi3jc2Q" name="instructions" type="_WryD0GG8Eeiv3YmXi3jc2Q" association="_NZ1scGG-Eeiv3YmXi3jc2Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_n-TCkGG-Eeiv3YmXi3jc2Q" memberEnd="_n-UQsGG-Eeiv3YmXi3jc2Q _n-U3wmG-Eeiv3YmXi3jc2Q">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_n-TpoGG-Eeiv3YmXi3jc2Q" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_n-TpoWG-Eeiv3YmXi3jc2Q" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_n-U3wmG-Eeiv3YmXi3jc2Q" name="recipe" type="_v17fcGG5Eeiv3YmXi3jc2Q" association="_n-TCkGG-Eeiv3YmXi3jc2Q"/>
   </packagedElement>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_5TyYQGF9Eeiv3YmXi3jc2Q">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_5UCP4GF9Eeiv3YmXi3jc2Q" source="http://www.eclipse.org/uml2/2.0.0/UML">

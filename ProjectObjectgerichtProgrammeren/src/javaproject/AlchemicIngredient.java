@@ -91,6 +91,8 @@ public class AlchemicIngredient {
 	 * 			The unit of our alchemic ingredient
 	 * @param	amount
 	 * 			The amount of the unit that is used to make this 
+	 * @pre		Unit must be compatible with state!
+	 * 			| type.getState() == quant.getType()
 	 * @post	The quantity is validly carried over
 	 * 			| isCarriedOver() == true
 	 * @post	The quantity of our alchemic ingredient is now equal to 1 unit of the given unit
@@ -99,6 +101,7 @@ public class AlchemicIngredient {
 	 * 			| this(type, getZeroQuantityList(100))
 	 */
 	public AlchemicIngredient(int amount, Quant unit, IngredientType type) {
+	
 		// making the bold assumption that there won't ever be more than a 100 different units (there are 7 right now)
 		// and our setter trims them to the correct size
 		this(type, getZeroQuantityList(100));
@@ -697,7 +700,7 @@ public class AlchemicIngredient {
 	/**
 	 * Get the type of this Alchemic ingredient
 	 */
-	
+	@Raw @Basic
 	public IngredientType getType() {
 		return this.type;
 	}
@@ -788,6 +791,7 @@ public class AlchemicIngredient {
 	 * @return	True if and only if the max value is less than Long.MAX_VALUE and is positive
 	 * 			| result == (0 < maxvalue && maxvalue < Long.MAX_VALUE)
 	 */
+	@Raw
 	public static boolean isValidMaxTemperature(long maxvalue) {
 		return 0 < maxvalue && maxvalue < Long.MAX_VALUE;
 	}
@@ -908,7 +912,8 @@ public class AlchemicIngredient {
 	 * @effect	Take the sum of both terms, then if they are larger than Long.MAX_VALUE, set them to Long.MAX_VALUE
 	 * 			|  (BigInteger.valueOf((long) term1).add(BigInteger.valueOf((long) term2))).min(BigInteger.valueOf(Long.MAX_VALUE)).longValue()
 	 */
-	public long takeSumAndBringDownToMax(long term1, long term2) {
+	// mocht static zijn
+	public static long takeSumAndBringDownToMax(long term1, long term2) {
 		return (BigInteger.valueOf((long) term1).add(BigInteger.valueOf((long) term2))).min(BigInteger.valueOf(Long.MAX_VALUE)).longValue();
 	}
 	
@@ -1166,6 +1171,7 @@ public class AlchemicIngredient {
 	 * 
 	 * 
 	 */
+	@Basic
 	public Volatility getVolatilityState() {
 		if 	(getStandardVolatility() > 1000) {
 			return Volatility.DANGER;
@@ -1217,6 +1223,7 @@ public class AlchemicIngredient {
 		/**
 		 * Return the state of this class volatility
 		 */
+		@Raw @Basic
 		public String getState() {
 			return this.state;
 		}
@@ -1237,6 +1244,7 @@ public class AlchemicIngredient {
 	/**
 	 * Check whether the ingredient is terminated
 	 */
+	@Basic
 	public boolean isTerminated() {
 		return terminated;
 	}

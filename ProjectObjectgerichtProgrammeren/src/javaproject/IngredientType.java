@@ -197,6 +197,7 @@ public class IngredientType {
 	 */
 	private String simpleName = "";
 	
+	//should be new.getName() == simplename
 	/**
 	 * Sets the simpleName of the ingredient
 	 * 

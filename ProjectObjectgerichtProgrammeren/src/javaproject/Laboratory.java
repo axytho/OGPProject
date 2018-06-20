@@ -278,12 +278,8 @@ public class Laboratory {
 	 * 
 	 * @param	container
 	 * 			The container which we're adding
-	 * @post	The content of the container is now stored in the device
-	 * 			| new.getIngredients().contains(container) == true
-	 * @effect	The ingredients of our container are brought to standard temperature
-	 * 			| bringToStandardTemp(container)
-	 * @effect	The ingredients of our container are brought to standard state
-	 * 			| bringToStandardState(container)
+	 * @post	The content of the container is now stored in the device, which has been brought to standard temperature and state
+	 * 			| new.getIngredients().contains(bringToStandardState(bringToStandardTemp(container))) == true
 	 * @throws	EmptyContainerException
 	 * 			The container you're adding is empty
 	 * 			| container.getContents() == null
@@ -299,8 +295,7 @@ public class Laboratory {
 		if (!this.isValidNewIngredient(container.getContents())) {
 			throw new IllegalArgumentException("Not a valid new ingredient");
 		}
-		bringToStandardTemp(container);
-		bringToStandardState(container);
+		container = bringToStandardTemp(bringToStandardState(container));
 		if (this.containsIngredientName(container.getContents())) {
 			addExtraIngredient(container);
 		} else {
@@ -471,12 +466,17 @@ public class Laboratory {
 	 *			| returnFridge().changeTemperature(container.getContents().getType().getStandardTemperature())
 	 *			| returnFridge().add(container)
 	 *			| returnFridge().execute()
-	 *		    | container =  returnFridge().result()
 	 *			|  else if (container.getContents().getTemperatureName() == AlchemicIngredient.Temperature.HEATED)
 	 *			| returnOven().changeTemperature(container.getContents().getType().getStandardTemperature())
 	 *			| returnOven().add(container)
 	 *			| returnOven().execute()
-	 *			| container = returnOven().result()
+	 * @return	The result from the device
+	 * 			| if (container.getContents().getTemperatureName() == AlchemicIngredient.Temperature.COOLED):
+	 * 			|		result == returnFridge().result()
+	 * 			|	else if (container.getContents().getTemperatureName() == AlchemicIngredient.Temperature.HEATED)
+	 * 			|		result == returnOven().result()
+	 * 			|	else
+	 * 			|		result ==  container 
 	 * @throws	IllegalStateException
 	 * 			This laboratory does not have a Oven (if heating) or a Cooling Box (if cooling)
 	 * 			| (AlchemicIngredient.compareTemperature(container.getContents().getTemperature(), 
@@ -485,17 +485,19 @@ public class Laboratory {
 	 * 			|  			container.getContents().getType().getStandardTemperature()) > 0 && !hasValidOven())
 	 */
 	@Raw
-	private void bringToStandardTemp(IngredientContainer container) throws IllegalStateException {
+	private IngredientContainer bringToStandardTemp(IngredientContainer container) throws IllegalStateException {
 		if (container.getContents().getTemperatureState() == AlchemicIngredient.Temperature.COOLED) {
 			returnFridge().changeTemperature(container.getContents().getType().getStandardTemperature());
 			returnFridge().add(container);
 			returnFridge().execute();
-			container =  returnFridge().result();
+			return returnFridge().result();
 		} else if (container.getContents().getTemperatureState() == AlchemicIngredient.Temperature.HEATED) {
 			returnOven().changeTemperature(container.getContents().getType().getStandardTemperature());
 			returnOven().add(container);
 			returnOven().execute();
-			container = returnOven().result();
+			return returnOven().result();
+		} else {
+			return container;
 		}
 	}
 	
@@ -514,7 +516,11 @@ public class Laboratory {
 	 *			| returnOven().changeTemperature(container.getContents().getType().getStandardTemperature())
 	 *			| returnOven().add(container)
 	 *			| returnOven().execute()
-	 *			| container = returnOven().result()
+	 * @return	The result of the transmogrifier
+	 * 			| if (container.getContents().getState() != container.getContents().getType().getState())
+	 * 			|	result == returnTransmogrifier().result()
+	 * 			| else
+	 * 			|	result == container
 	 * @throws	IllegalStateException
 	 * 			This laboratory does not have a Oven (if heating) or a Cooling Box (if cooling)
 	 * 			| (AlchemicIngredient.compareTemperature(container.getContents().getTemperature(), 
@@ -523,12 +529,13 @@ public class Laboratory {
 	 * 			|  			container.getContents().getType().getStandardTemperature()) > 0 && !hasOven())
 	 */
 	@Raw
-	private void bringToStandardState(IngredientContainer container) throws IllegalStateException {
+	private IngredientContainer bringToStandardState(IngredientContainer container) throws IllegalStateException {
 		if (container.getContents().getState() != container.getContents().getType().getState()) {
 			returnTransmogrifier().add(container);
 			returnTransmogrifier().execute();
-			container =  returnTransmogrifier().result();
+			return returnTransmogrifier().result();
 		} 
+		return container;
 	}
 
 
@@ -590,7 +597,7 @@ public class Laboratory {
 			} else {
 				return middle;
 			}
-			middle = left+right/2;
+			middle = (left+right)/2;
 		}
 		return -1;
 	}
@@ -623,7 +630,7 @@ public class Laboratory {
 			if (middle == getSize()) {
 				// Because we want to be able to return getSize(), it must be possible for middle to be getSize(), and thus a seperate check is needed
 				assert(getIngredientAt(middle - 1).getName().compareTo(name) < 0);
-				return middle;
+				return left;
 			}
 			difference = getIngredientAt(middle).getName().compareTo(name);
 			if (difference < 0) {
@@ -635,9 +642,10 @@ public class Laboratory {
 			}
 			middle = (left+right)/2;
 		}
-		// right = left - 1 and floor(right + left / 2) == middle
-		assert(right == middle || right == -1 && middle == 0);
-		return middle;
+		// right = left - 1 and floor((right + left) / 2) == middle
+		assert(right == left - 1);
+		assert(right == middle || right == -1 && middle == 0 && left == 0);
+		return left;
 	}
 	
 	/**
@@ -1003,13 +1011,14 @@ public class Laboratory {
 		executive.setFactor(multiplier);
 		for (String instruction: executive.getRecipe().getInstructions()) {
 			try {
-				switch (instruction) {
-					case "add": executive.add(this);
-					case "heat": executive.heat(this);
-					case "cool": executive.cool(this);
-					case "mix": executive.mix(this);
-				}
-				
+				if (instruction == "add") {
+					executive.add(this); }
+				if (instruction == "heat") {
+					executive.heat(this); }
+				if (instruction == "cool") {
+					executive.cool(this);}
+				if (instruction == "mix") {
+					executive.mix(this); }
 			} catch (ExceedsStorageException e1) {
 				//System.err.println(String.valueOf(e1.getAmountAsked()) + " is more than " + String.valueOf(e1.getAmountAvailable()));
 				executive.returnToStorage(this);

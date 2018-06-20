@@ -262,7 +262,7 @@ public class Kettle extends Device {
 		for (AlchemicIngredient ingredient : getIngredients()) {
 			sum += ingredient.giveInSpoons() * (ingredient.getHotness()-ingredient.getColdness());
 		}
-		long temperature =   ((long) sum/ (long) result.giveInSpoons());
+		long temperature =   (long) ( sum/ result.giveInSpoons());
 		return AlchemicIngredient.temperatureToArray(temperature);		
 	}
 	

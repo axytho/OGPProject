@@ -51,6 +51,7 @@ public class ExecutiveRecipe {
 
 		public void add(Laboratory lab) throws NameNotFoundException, ExceedsContainerCapacityException, ExceedsStorageException {
 			push(lab.get(getCurrentAmount().getIngredientType().getName(), getCurrentAmount().getUnit(), getCurrentAmount().getQuantity()));
+			nextAmount();
 		}
 
 	
@@ -77,7 +78,7 @@ public class ExecutiveRecipe {
 	
 
 		public void mix(Laboratory lab) throws IllegalStateException {
-			for (int index = 0; index < getCurrentItems().size(); index++) {
+			while (getCurrentItems().size() > 0) {
 				lab.returnKettle().add(pop());
 			}
 			lab.returnKettle().execute();

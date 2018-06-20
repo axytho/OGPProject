@@ -67,13 +67,13 @@ public class CoolingBox extends TempDevice {
 	 * @effect	We execute this temperature device
 	 * 			| super.execute()
 	 * @effect	We cool the result until it is equal to the coldness of our cooling box, the difference between our cooling box and the temperature
-	 * 			is negative (i.e. the result is cooler than our cooling box, the temperature does not change)
-	 * 			| getResult().cool(Double.max(AlchemicIngredient.differenceTemperature(getTemperature(), getResult().getTemperature()), 0))
+	 * 			is positive (i.e. the result is cooler than our cooling box, the temperature does not change)
+	 * 			| getResult().cool(Long.max(-1 * AlchemicIngredient.differenceTemperature(getTemperature(), getResult().getTemperature()), 0))
 	 */
 	@Override
 	public void execute() {
 		super.execute();
-		getResult().cool(Long.max(AlchemicIngredient.differenceTemperature(getTemperature(), getResult().getTemperature()), 0));
+		getResult().cool(Long.max(-1 * AlchemicIngredient.differenceTemperature(getTemperature(), getResult().getTemperature()), 0));
 	}
 
 
